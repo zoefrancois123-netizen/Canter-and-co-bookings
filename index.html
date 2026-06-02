@@ -53,86 +53,130 @@
             <span>Client booking request</span>
             <strong id="booking-total">R 950</strong>
           </div>
-          <label>
-            Client name
-            <input required name="clientName" placeholder="e.g. Emma Hart" />
-          </label>
-          <label>
-            Email
-            <input required type="email" name="email" placeholder="client@email.com" />
-          </label>
-          <label>
-            Phone
-            <input required name="phone" placeholder="+27 82 000 0000" />
-          </label>
-          <label>
-            Horse / pony
-            <select name="horseName" id="booking-horse-name"></select>
-          </label>
-          <input type="hidden" name="lessonHorseId" id="booking-horse" value="own-horse" />
-          <div class="two-col">
+
+          <div class="form-section">
+            <h3>Client details</h3>
             <label>
-              Rider age
-              <input type="number" min="3" max="100" step="1" name="riderAge" placeholder="Age" />
+              Client name
+              <input required name="clientName" placeholder="e.g. Emma Hart" />
             </label>
-            <label>
-              Own horse's name
-              <input name="ownHorseName" id="own-horse-name" placeholder="Only if using own horse" />
-            </label>
+            <div class="two-col">
+              <label>
+                Email
+                <input required type="email" name="email" placeholder="client@email.com" />
+              </label>
+              <label>
+                Phone
+                <input required name="phone" placeholder="+27 82 000 0000" />
+              </label>
+            </div>
           </div>
-          <label>
-            If using own horse what is your location
-            <select name="ownHorseLocation" id="own-horse-location">
-              <option value="">Not applicable</option>
-              <option value="Stellenbosch">Stellenbosch</option>
-              <option value="Paarl">Paarl</option>
-              <option value="Somerset west">Somerset west</option>
-              <option value="Cape Town">Cape Town</option>
-              <option value="Other">Other</option>
-            </select>
-          </label>
-          <div class="two-col">
+
+          <div class="form-section">
+            <h3>Animal and location</h3>
             <label>
-              Service
-              <select name="serviceId" id="booking-service"></select>
+              Horse / Animal
+              <select name="horseName" id="booking-horse-name"></select>
             </label>
-            <label>
-              Service charge
-              <input required type="number" min="0" step="10" name="serviceRate" id="booking-service-rate" />
-            </label>
+            <input type="hidden" name="lessonHorseId" id="booking-horse" value="own-horse" />
+            <div class="two-col">
+              <label>
+                Rider age
+                <input type="number" min="3" max="100" step="1" name="riderAge" placeholder="Age" />
+              </label>
+              <label>
+                Own Horse/Animal Name
+                <input name="ownHorseName" id="own-horse-name" placeholder="Only if using own horse" />
+              </label>
+            </div>
+            <div class="two-col">
+              <label>
+                Broad appointment location
+                <select name="ownHorseLocation" id="own-horse-location">
+                  <option value="">Not applicable</option>
+                  <option value="Glen Graze">Glen Graze</option>
+                  <option value="Stellenbosch">Stellenbosch</option>
+                  <option value="Paarl">Paarl</option>
+                  <option value="Somerset west">Somerset west</option>
+                  <option value="Cape Town">Cape Town</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+              <label>
+                Private yard name
+                <input name="privateYardName" placeholder="Short answer" />
+              </label>
+            </div>
           </div>
-          <div class="two-col">
-            <label>
-              Date
-              <input required type="date" name="date" />
-            </label>
-            <label>
-              Time
-              <input required type="time" name="time" value="09:00" />
-            </label>
+
+          <div class="form-section">
+            <h3>Service</h3>
+            <div class="two-col">
+              <label>
+                Service
+                <select name="serviceId" id="booking-service"></select>
+              </label>
+              <label>
+                Service charge
+                <input required type="number" min="0" step="10" name="serviceRate" id="booking-service-rate" />
+              </label>
+            </div>
           </div>
-          <input type="hidden" name="horseRate" id="booking-horse-rate" value="0" />
-          <input type="hidden" name="quantity" value="1" />
-          <div class="repeat-box">
-            <label class="check-row">
-              <input type="checkbox" name="repeatWeekly" />
-              Repeat weekly
-            </label>
-            <label class="check-row">
-              <input type="checkbox" name="repeatFortnightly" />
-              Repeat every fortnight
-            </label>
-            <label>
-              Number of appointments
-              <input type="number" min="1" max="52" step="1" name="repeatWeeks" value="4" />
-            </label>
+
+          <div class="form-section">
+            <h3>Date and time</h3>
+            <div class="date-builder">
+              <button id="add-date" class="ghost" type="button">Add Consecutive Dates (yy/mm/dd)</button>
+              <div class="date-range-controls">
+                <label>
+                  Start date
+                  <input type="date" id="start-date-picker" />
+                </label>
+                <label>
+                  End date
+                  <input type="date" id="end-date-picker" />
+                </label>
+                <label class="check-row compact-check">
+                  <input type="checkbox" id="end-date-na" />
+                  NA
+                </label>
+              </div>
+              <input type="hidden" name="dates" />
+            </div>
+            <div class="two-col time-repeat-grid">
+              <label>
+                Time
+                <input required type="time" name="time" value="09:00" />
+              </label>
+              <label>
+                Number of appointments
+                <input type="number" min="1" max="52" step="1" name="repeatWeeks" value="4" />
+              </label>
+            </div>
+            <input type="hidden" name="horseRate" id="booking-horse-rate" value="0" />
+            <input type="hidden" name="quantity" value="1" />
+            <div class="repeat-box">
+              <label class="check-row">
+                <input type="checkbox" name="repeatWeekly" />
+                Repeat weekly
+              </label>
+              <label class="check-row">
+                <input type="checkbox" name="repeatFortnightly" />
+                Repeat every fortnight
+              </label>
+            </div>
           </div>
-          <label>
-            Notes
-            <textarea name="notes" rows="3" placeholder="Show class, horse care notes, tack needs, stable address..."></textarea>
-          </label>
-          <p class="policy-note">Appointments can only be rescheduled at least 48 hours in advance.</p>
-          <button class="primary" type="submit">Request booking</button>
+
+          <div class="form-section">
+            <h3>Notes</h3>
+            <label>
+              Notes
+              <textarea name="notes" rows="3" placeholder="Show class, horse care notes, tack needs, stable address..."></textarea>
+            </label>
+            <p class="policy-note">Appointments can only be rescheduled at least 48 hours in advance.</p>
+          </div>
+
+          <button class="primary submit-booking" type="submit">Request booking</button>
         </form>
       </section>
 

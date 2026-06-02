@@ -325,8 +325,26 @@ main {
 .booking-panel,
 .editor {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   padding: 22px;
+}
+
+.form-section {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(35, 31, 27, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.62);
+}
+
+.form-section h3 {
+  margin: 0;
+  color: var(--clay);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .panel-title,
@@ -366,6 +384,14 @@ textarea {
   background: #fffdf8;
 }
 
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(216, 174, 114, 0.45);
+  outline-offset: 1px;
+  border-color: rgba(216, 174, 114, 0.72);
+}
+
 textarea {
   resize: vertical;
 }
@@ -378,7 +404,7 @@ textarea {
 
 .repeat-box {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 180px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   align-items: end;
   padding: 12px;
@@ -387,12 +413,40 @@ textarea {
   background: rgba(247, 239, 227, 0.82);
 }
 
+.date-builder {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+
+.date-range-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 80px;
+  gap: 12px;
+  align-items: end;
+}
+
+.date-builder .ghost {
+  min-height: 45px;
+  white-space: normal;
+  line-height: 1.15;
+}
+
 .check-row {
   display: flex;
   align-items: center;
   gap: 10px;
   min-height: 43px;
   color: var(--ink);
+}
+
+.compact-check {
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+  background: #fffdf8;
 }
 
 .check-row input {
@@ -415,6 +469,11 @@ textarea {
   color: var(--ink);
   background: var(--gold);
   font-weight: 850;
+}
+
+.submit-booking {
+  min-height: 50px;
+  font-size: 1rem;
 }
 
 .ghost {
@@ -856,6 +915,9 @@ textarea {
 
   .two-col,
   .repeat-box,
+  .date-builder,
+  .date-range-controls,
+  .time-repeat-grid,
   .invoice-parties,
   .metrics,
   .client-grid,

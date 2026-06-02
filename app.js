@@ -93,6 +93,9 @@ const lessonHorses = [
   { id: "moonshine", name: "Moonshine", charge: 0, notes: "School horse" },
   { id: "caramel", name: "Caramel", charge: 0, notes: "School horse" },
   { id: "kaleb", name: "Kaleb", charge: 0, notes: "School horse" },
+  { id: "cat", name: "Cat", charge: 0, notes: "Animal care" },
+  { id: "dog", name: "Dog", charge: 0, notes: "Animal care" },
+  { id: "other-animal", name: "Other", charge: 0, notes: "Animal care" },
 ];
 
 const defaultState = {
@@ -153,6 +156,7 @@ function recordHistory(type, message, details = {}) {
 function initCloudDatabase() {
   if (!window.supabase) {
     setCloudStatus("Cloud unavailable");
+    document.getElementById("gate-login-button").disabled = true;
     return;
   }
 
@@ -185,22 +189,31 @@ function updateCloudAuthUi() {
 }
 
 async function loginToCloud() {
-  if (!cloudClient) return;
+  if (!cloudClient) {
+    setCloudStatus("Cloud unavailable");
+    alert("Supabase did not load. Check that you are online, then reopen the app.");
+    return;
+  }
   const email = (
     document.getElementById("gate-login-email").value
   ).trim();
   const password = document.getElementById("gate-login-password").value;
   if (!email || !password) {
+    setCloudStatus("Enter email and password");
     alert("Enter Chloe's Supabase email and password.");
     return;
   }
 
   setCloudStatus("Logging in...");
+  document.getElementById("gate-login-button").disabled = true;
   const { error } = await cloudClient.auth.signInWithPassword({ email, password });
+  document.getElementById("gate-login-button").disabled = false;
   if (error) {
     setCloudStatus("Login failed");
-    alert(error.message);
+    alert(`Login failed: ${error.message}`);
+    return;
   }
+  setCloudStatus("Logged in");
 }
 
 async function logoutFromCloud() {
@@ -330,6 +343,58 @@ function addDays(dateValue, days) {
   const date = new Date(`${dateValue}T00:00:00`);
   date.setDate(date.getDate() + days);
   return dateKey(date);
+}
+
+function parseDateList(value) {
+  return [...new Set(
+    String(value || "")
+      .split(/[\n,;]+/)
+      .map((date) => date.trim())
+      .filter(Boolean)
+  )];
+}
+
+function isValidDateKey(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00`);
+  return dateKey(date) === value;
+}
+
+function datesBetween(startDate, endDate) {
+  const dates = [];
+  let cursor = startDate;
+  while (cursor <= endDate) {
+    dates.push(cursor);
+    cursor = addDays(cursor, 1);
+  }
+  return dates;
+}
+
+function addPickedDate() {
+  const startPicker = document.getElementById("start-date-picker");
+  const endPicker = document.getElementById("end-date-picker");
+  const endDateNa = document.getElementById("end-date-na").checked;
+  const datesField = document.querySelector("[name='dates']");
+  if (!startPicker.value) {
+    alert("Choose a start date first.");
+    return;
+  }
+  if (!endDateNa && endPicker.value && endPicker.value < startPicker.value) {
+    alert("End date must be the same as or after the start date.");
+    return;
+  }
+  const dates = parseDateList(datesField.value);
+  const newDates = endDateNa || !endPicker.value
+    ? [startPicker.value]
+    : datesBetween(startPicker.value, endPicker.value);
+  dates.push(...newDates);
+  datesField.value = [...new Set(dates)].join("\n");
+}
+
+function toggleEndDate() {
+  const endPicker = document.getElementById("end-date-picker");
+  endPicker.disabled = document.getElementById("end-date-na").checked;
+  if (endPicker.disabled) endPicker.value = "";
 }
 
 function emptyNode(message = "New bookings and invoices will appear here as they are added.") {
@@ -556,6 +621,7 @@ function renderBookings() {
           <span>${formatDate(booking.date)} at ${booking.time}</span>
           <span>${booking.horseName || "No horse listed"}</span>
           ${booking.ownHorseLocation ? `<span>Location: ${booking.ownHorseLocation}</span>` : ""}
+          ${booking.privateYardName ? `<span>Yard: ${booking.privateYardName}</span>` : ""}
           <span>Rider age: ${booking.riderAge || "Not listed"}</span>
           <span>Lesson horse: ${horse.name}${Number(booking.horseRate ?? horse.charge) ? ` + ${money.format(Number(booking.horseRate ?? horse.charge))}` : ""}</span>
           <strong>${money.format(bookingTotal(booking))}</strong>
@@ -599,7 +665,7 @@ function renderBookingEditor(booking) {
         <span class="policy-note">School horses and own horses have no horse-use charge.</span>
       </div>
       <label>
-        Horse / pony
+        Horse / Animal
         <select data-edit-field="lessonHorseId">
           ${lessonHorses
             .map((horse) => `<option value="${horse.id}" ${horse.id === (booking.lessonHorseId || "own-horse") ? "selected" : ""}>${horse.name}${horse.charge ? ` - ${money.format(horse.charge)}` : ""}</option>`)
@@ -673,7 +739,7 @@ function renderServices() {
   const horseCards = `
     <article class="service-card">
       <h3>Available lesson horses</h3>
-      <p class="muted">Allocate one of these horses to a lesson, or choose the client's own horse with no extra charge.</p>
+      <p class="muted">Allocate one of these horses or animals to a booking, or choose the client's own horse with no extra charge.</p>
       <div class="client-detail">
         ${lessonHorses
           .map((horse) => `<span><strong>${horse.name}</strong> - ${horse.charge ? money.format(horse.charge) : "No charge"}<br />${horse.notes}</span>`)
@@ -1071,6 +1137,8 @@ document.getElementById("gate-login-button").addEventListener("click", loginToCl
     if (event.key === "Enter") loginToCloud();
   });
 });
+document.getElementById("add-date").addEventListener("click", addPickedDate);
+document.getElementById("end-date-na").addEventListener("change", toggleEndDate);
 document.getElementById("booking-service").addEventListener("change", updateServiceChargeDefault);
 document.getElementById("booking-horse-name").addEventListener("change", syncBookingHorseChoice);
 document.getElementById("booking-service-rate").addEventListener("input", updateBookingTotal);
@@ -1086,6 +1154,12 @@ document.querySelector("[name='repeatFortnightly']").addEventListener("change", 
 document.getElementById("booking-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
+  const dateList = parseDateList(data.dates);
+  const invalidDates = dateList.filter((date) => !isValidDateKey(date));
+  if (!dateList.length || invalidDates.length) {
+    alert("Please enter dates as YYYY-MM-DD. For multiple dates, put each date on a new line or separate them with commas.");
+    return;
+  }
   const repeatCount = (data.repeatWeekly || data.repeatFortnightly)
     ? Math.max(1, Math.min(52, Number(data.repeatWeeks || 1)))
     : 1;
@@ -1100,43 +1174,50 @@ document.getElementById("booking-form").addEventListener("submit", (event) => {
     horseName: data.lessonHorseId === "own-horse" ? bookingHorseName : undefined,
     riderAge: data.riderAge,
   });
-  for (let repeatIndex = 0; repeatIndex < repeatCount; repeatIndex += 1) {
-    const booking = {
-      id: id("booking"),
-      clientId,
-      clientName: data.clientName,
-      email: data.email,
-      phone: data.phone,
-      horseName: bookingHorseName,
-      riderAge: data.riderAge,
-      serviceId: data.serviceId,
-      lessonHorseId: data.lessonHorseId,
-      ownHorseName: data.ownHorseName || "",
-      ownHorseLocation: data.lessonHorseId === "own-horse" ? data.ownHorseLocation : "",
-      serviceRate: Number(data.serviceRate || 0),
-      horseRate: Number(data.horseRate || 0),
-      date: addDays(data.date, repeatIndex * repeatIntervalDays),
-      time: data.time,
-      quantity: Number(data.quantity || 1),
-      notes: repeatCount > 1
-        ? `${data.notes || ""}${data.notes ? " " : ""}${repeatLabel} appointment ${repeatIndex + 1} of ${repeatCount}.`
-        : data.notes,
-      status: "Requested",
-      seriesId,
-      createdAt: new Date().toISOString(),
-    };
-    state.bookings.push(booking);
-    recordHistory("booking", `Created appointment for ${data.clientName}`, {
-      bookingId: booking.id,
-      clientId,
-      date: booking.date,
-      repeat: repeatCount > 1 ? repeatLabel : "Once",
-    });
-  }
-  state.calendarMonth = data.date.slice(0, 7);
+  dateList.forEach((baseDate) => {
+    for (let repeatIndex = 0; repeatIndex < repeatCount; repeatIndex += 1) {
+      const booking = {
+        id: id("booking"),
+        clientId,
+        clientName: data.clientName,
+        email: data.email,
+        phone: data.phone,
+        horseName: bookingHorseName,
+        riderAge: data.riderAge,
+        serviceId: data.serviceId,
+        lessonHorseId: data.lessonHorseId,
+        ownHorseName: data.ownHorseName || "",
+        ownHorseLocation: data.lessonHorseId === "own-horse" ? data.ownHorseLocation : "",
+        privateYardName: data.privateYardName || "",
+        serviceRate: Number(data.serviceRate || 0),
+        horseRate: Number(data.horseRate || 0),
+        date: addDays(baseDate, repeatIndex * repeatIntervalDays),
+        time: data.time,
+        quantity: Number(data.quantity || 1),
+        notes: repeatCount > 1
+          ? `${data.notes || ""}${data.notes ? " " : ""}${repeatLabel} appointment ${repeatIndex + 1} of ${repeatCount}.`
+          : data.notes,
+        status: "Requested",
+        seriesId,
+        createdAt: new Date().toISOString(),
+      };
+      state.bookings.push(booking);
+      recordHistory("booking", `Created appointment for ${data.clientName}`, {
+        bookingId: booking.id,
+        clientId,
+        date: booking.date,
+        repeat: repeatCount > 1 ? repeatLabel : "Once",
+      });
+    }
+  });
+  state.calendarMonth = dateList[0].slice(0, 7);
   saveState();
   event.currentTarget.reset();
-  document.querySelector("[name='date']").value = todayPlus(1);
+  document.querySelector("[name='dates']").value = todayPlus(1);
+  document.getElementById("start-date-picker").value = todayPlus(1);
+  document.getElementById("end-date-picker").value = "";
+  document.getElementById("end-date-na").checked = true;
+  toggleEndDate();
   document.querySelector("[name='time']").value = "09:00";
   document.querySelector("[name='repeatWeeks']").value = "4";
   document.querySelector("[name='repeatWeekly']").checked = false;
@@ -1144,6 +1225,7 @@ document.getElementById("booking-form").addEventListener("submit", (event) => {
   document.getElementById("booking-horse-name").value = "own-horse";
   document.getElementById("own-horse-name").value = "";
   document.getElementById("own-horse-location").value = "";
+  document.querySelector("[name='privateYardName']").value = "";
   syncBookingHorseChoice();
   updateServiceChargeDefault();
   render();
@@ -1321,7 +1403,11 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
   }
 });
 
-document.querySelector("[name='date']").value = todayPlus(1);
+document.getElementById("start-date-picker").value = todayPlus(1);
+document.getElementById("end-date-picker").value = "";
+document.getElementById("end-date-na").checked = true;
+toggleEndDate();
+document.querySelector("[name='dates']").value = todayPlus(1);
 document.querySelector("[name='dueDate']").value = todayPlus(7);
 render();
 initCloudDatabase();

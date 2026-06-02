@@ -20,6 +20,7 @@ What it does now:
 - creates weekly recurring appointments for up to 52 weeks
 - creates fortnightly recurring appointments
 - captures own-horse name and owner location for own-horse bookings
+- accepts one or multiple booking dates using a calendar picker plus the Date/Dates list
 - lets bookings be rescheduled by changing their date and time
 - states that appointments can only be rescheduled at least 48 hours in advance
 - lets Chloe cancel appointments and removes cancelled bookings from invoices
