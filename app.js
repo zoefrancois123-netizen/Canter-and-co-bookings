@@ -2,40 +2,91 @@ const STORAGE_KEY = "canter-co-booking-studio-v2";
 
 const services = [
   {
-    id: "show-prep",
-    name: "Horse Show Preparation",
-    price: 950,
+    id: "show-prep-mane",
+    name: "Horse Show Prep - Mane Only",
+    price: 250,
     unit: "session",
-    description: "Bathing, turnout polish, plaiting plan, tack check, and show-day readiness.",
+    description: "Mane preparation for show day.",
+  },
+  {
+    id: "show-prep-mane-tail",
+    name: "Horse Show Prep - Mane & Tail",
+    price: 300,
+    unit: "session",
+    description: "Mane and tail preparation for show day.",
+  },
+  {
+    id: "show-prep-tail",
+    name: "Horse Show Prep - Tail Only",
+    price: 50,
+    unit: "session",
+    description: "Tail preparation for show day.",
   },
   {
     id: "beginner-lesson",
-    name: "Beginner Riding Lesson",
-    price: 650,
+    name: "Flat work Lesson",
+    price: 300,
     unit: "lesson",
-    description: "A calm foundation lesson for new riders, confidence building, and safe basics.",
+    description: "Flat work lesson for beginner and developing riders.",
+  },
+  {
+    id: "jumping-lesson",
+    name: "Jumping Lesson",
+    price: 300,
+    unit: "lesson",
+    description: "Jumping lesson for riders building confidence and technique.",
+  },
+  {
+    id: "basics-ground-work",
+    name: "Basics Ground Work Lesson",
+    price: 200,
+    unit: "lesson",
+    description: "Ground work basics for safe handling, confidence, and connection.",
   },
   {
     id: "exercise-ride",
-    name: "Exercise Ride",
-    price: 520,
-    unit: "ride",
-    description: "Keeping horses moving while owners are away, with notes after each ride.",
+    name: "Schooling Session",
+    price: 200,
+    unit: "session",
+    description: "A schooling session to keep horses moving and progressing.",
   },
   {
     id: "show-day-support",
-    name: "Show Day Support",
-    price: 1450,
+    name: "Show Help",
+    price: 400,
     unit: "day",
-    description: "Warm-up, class timing, grooming touch-ups, and rider support at the show.",
+    description: "Show-day help, grooming touch-ups, and rider support.",
+  },
+  {
+    id: "baby-sitting",
+    name: "Baby sitting",
+    price: 300,
+    unit: "booking",
+    description: "Baby sitting service.",
+  },
+  {
+    id: "house-sitting",
+    name: "House sitting",
+    price: 400,
+    unit: "booking",
+    description: "House sitting service.",
+  },
+  {
+    id: "pet-sitting",
+    name: "Pet Sitting",
+    price: 50,
+    unit: "booking",
+    description: "Pet sitting service.",
   },
 ];
 
 const lessonHorses = [
   { id: "own-horse", name: "Client's own horse", charge: 0, notes: "No horse-use charge" },
-  { id: "bella", name: "Bella", charge: 250, notes: "Quiet pony for smaller beginner riders" },
-  { id: "storm", name: "Storm", charge: 300, notes: "Steady schoolmaster for teens and adults" },
-  { id: "maple", name: "Maple", charge: 280, notes: "Kind all-rounder for nervous riders" },
+  { id: "max", name: "Max", charge: 0, notes: "School horse" },
+  { id: "star", name: "Star", charge: 0, notes: "School horse" },
+  { id: "moonshine", name: "Moonshine", charge: 0, notes: "School horse" },
+  { id: "caramel", name: "Caramel", charge: 0, notes: "School horse" },
+  { id: "kaleb", name: "Kaleb", charge: 0, notes: "School horse" },
 ];
 
 const defaultState = {
@@ -76,11 +127,18 @@ function id(prefix) {
 }
 
 function serviceById(serviceId) {
+  if (serviceId === "show-prep") return services.find((service) => service.id === "show-prep-mane-tail");
   return services.find((service) => service.id === serviceId) || services[0];
 }
 
 function horseById(horseId) {
-  return lessonHorses.find((horse) => horse.id === horseId) || lessonHorses[0];
+  const oldHorseMap = {
+    bella: "max",
+    storm: "star",
+    maple: "moonshine",
+  };
+  const resolvedHorseId = oldHorseMap[horseId] || horseId;
+  return lessonHorses.find((horse) => horse.id === resolvedHorseId) || lessonHorses[0];
 }
 
 function horseCharge(booking) {
@@ -234,8 +292,14 @@ function updateBookingTotal() {
 
 function updateHorseChargeDisplay() {
   const horse = horseById(document.getElementById("booking-horse").value);
-  document.getElementById("horse-charge-display").value = horse.charge ? `${money.format(horse.charge)} per booking` : "No charge";
   document.getElementById("booking-horse-rate").value = horse.charge;
+  const isOwnHorse = horse.id === "own-horse";
+  document.getElementById("own-horse-name").disabled = !isOwnHorse;
+  document.getElementById("own-horse-location").disabled = !isOwnHorse;
+  if (!isOwnHorse) {
+    document.getElementById("own-horse-name").value = "";
+    document.getElementById("own-horse-location").value = "";
+  }
 }
 
 function updateServiceChargeDefault() {
@@ -251,9 +315,9 @@ function syncBookingHorseChoice() {
   updateBookingTotal();
 }
 
-function horseNameForBooking(horseId, fallback = "") {
+function horseNameForBooking(horseId, ownHorseName = "") {
   const horse = horseById(horseId);
-  return horse.id === "own-horse" ? "Client's own horse" : horse.name;
+  return horse.id === "own-horse" ? (ownHorseName || "Client's own horse") : horse.name;
 }
 
 function renderMetrics() {
@@ -349,6 +413,7 @@ function renderBookings() {
           <span>Service charge: ${money.format(Number(booking.serviceRate ?? service.price))}</span>
           <span>${formatDate(booking.date)} at ${booking.time}</span>
           <span>${booking.horseName || "No horse listed"}</span>
+          ${booking.ownHorseLocation ? `<span>Location: ${booking.ownHorseLocation}</span>` : ""}
           <span>Rider age: ${booking.riderAge || "Not listed"}</span>
           <span>Lesson horse: ${horse.name}${Number(booking.horseRate ?? horse.charge) ? ` + ${money.format(Number(booking.horseRate ?? horse.charge))}` : ""}</span>
           <strong>${money.format(bookingTotal(booking))}</strong>
@@ -389,10 +454,7 @@ function renderBookingEditor(booking) {
           Service charge
           <input type="number" min="0" step="10" data-edit-field="serviceRate" value="${Number(booking.serviceRate ?? serviceById(booking.serviceId).price)}" />
         </label>
-        <label>
-          Horse charge
-          <input type="number" min="0" step="10" data-edit-field="horseRate" value="${Number(booking.horseRate ?? horseById(booking.lessonHorseId).charge)}" />
-        </label>
+        <span class="policy-note">School horses and own horses have no horse-use charge.</span>
       </div>
       <label>
         Horse / pony
@@ -610,7 +672,7 @@ function renderInvoicePreview() {
 
   preview.innerHTML = `
     <header>
-      <img src="assets/canter-co-logo-white.png" alt="Canter and Co logo" />
+      <img src="assets/canter-co-services-invoice-logo.png" alt="Canter and Co Services logo" />
       <div class="invoice-id-block">
         <p class="eyebrow">Invoice</p>
         <h2>${invoice.number}</h2>
@@ -625,8 +687,8 @@ function renderInvoicePreview() {
       </div>
       <div>
         <span>From</span>
-        <strong>Canter and Co</strong>
-        <p>Equestrian Services<br />Show prep - Riding - Lessons</p>
+        <strong>Canter & Co Services</strong>
+        <p>Care - Coaching - Confidence<br />Show prep - Riding - Lessons</p>
       </div>
     </section>
     <table>
@@ -731,6 +793,7 @@ function fillBookingFormFromClient(client) {
   form.elements.phone.value = client.phone;
   form.elements.horseName.value = "own-horse";
   form.elements.lessonHorseId.value = "own-horse";
+  form.elements.ownHorseName.value = client.horseName || "";
   form.elements.riderAge.value = client.riderAge || "";
   syncBookingHorseChoice();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -768,7 +831,7 @@ function seedDemoData() {
       phone: "+27 82 123 4567",
       horseName: "Willow",
       riderAge: "14",
-      serviceId: "show-prep",
+      serviceId: "show-prep-mane-tail",
       lessonHorseId: "own-horse",
       date: todayPlus(3),
       time: "08:30",
@@ -786,7 +849,7 @@ function seedDemoData() {
       horseName: "Beginner rider",
       riderAge: "9",
       serviceId: "beginner-lesson",
-      lessonHorseId: "bella",
+      lessonHorseId: "max",
       date: todayPlus(5),
       time: "15:00",
       quantity: 1,
@@ -828,37 +891,50 @@ document.getElementById("booking-horse-name").addEventListener("change", syncBoo
 document.getElementById("booking-service-rate").addEventListener("input", updateBookingTotal);
 document.getElementById("booking-horse-rate").addEventListener("input", updateBookingTotal);
 document.querySelector("[name='quantity']").addEventListener("input", updateBookingTotal);
+document.querySelector("[name='repeatWeekly']").addEventListener("change", (event) => {
+  if (event.target.checked) document.querySelector("[name='repeatFortnightly']").checked = false;
+});
+document.querySelector("[name='repeatFortnightly']").addEventListener("change", (event) => {
+  if (event.target.checked) document.querySelector("[name='repeatWeekly']").checked = false;
+});
 
 document.getElementById("booking-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(event.currentTarget));
-  const repeatWeeks = data.repeatWeekly ? Math.max(1, Math.min(52, Number(data.repeatWeeks || 1))) : 1;
-  const seriesId = repeatWeeks > 1 ? id("series") : "";
+  const repeatCount = (data.repeatWeekly || data.repeatFortnightly)
+    ? Math.max(1, Math.min(52, Number(data.repeatWeeks || 1)))
+    : 1;
+  const repeatIntervalDays = data.repeatFortnightly ? 14 : 7;
+  const repeatLabel = data.repeatFortnightly ? "Fortnightly" : "Weekly";
+  const seriesId = repeatCount > 1 ? id("series") : "";
+  const bookingHorseName = horseNameForBooking(data.lessonHorseId, data.ownHorseName);
   const clientId = upsertClient({
     clientName: data.clientName,
     email: data.email,
     phone: data.phone,
-    horseName: data.lessonHorseId === "own-horse" ? horseNameForBooking(data.lessonHorseId) : undefined,
+    horseName: data.lessonHorseId === "own-horse" ? bookingHorseName : undefined,
     riderAge: data.riderAge,
   });
-  for (let week = 0; week < repeatWeeks; week += 1) {
+  for (let repeatIndex = 0; repeatIndex < repeatCount; repeatIndex += 1) {
     state.bookings.push({
       id: id("booking"),
       clientId,
       clientName: data.clientName,
       email: data.email,
       phone: data.phone,
-      horseName: horseNameForBooking(data.lessonHorseId),
+      horseName: bookingHorseName,
       riderAge: data.riderAge,
       serviceId: data.serviceId,
       lessonHorseId: data.lessonHorseId,
+      ownHorseName: data.ownHorseName || "",
+      ownHorseLocation: data.lessonHorseId === "own-horse" ? data.ownHorseLocation : "",
       serviceRate: Number(data.serviceRate || 0),
       horseRate: Number(data.horseRate || 0),
-      date: addDays(data.date, week * 7),
+      date: addDays(data.date, repeatIndex * repeatIntervalDays),
       time: data.time,
       quantity: Number(data.quantity || 1),
-      notes: repeatWeeks > 1
-        ? `${data.notes || ""}${data.notes ? " " : ""}Weekly appointment ${week + 1} of ${repeatWeeks}.`
+      notes: repeatCount > 1
+        ? `${data.notes || ""}${data.notes ? " " : ""}${repeatLabel} appointment ${repeatIndex + 1} of ${repeatCount}.`
         : data.notes,
       status: "Requested",
       seriesId,
@@ -871,7 +947,11 @@ document.getElementById("booking-form").addEventListener("submit", (event) => {
   document.querySelector("[name='date']").value = todayPlus(1);
   document.querySelector("[name='time']").value = "09:00";
   document.querySelector("[name='repeatWeeks']").value = "4";
+  document.querySelector("[name='repeatWeekly']").checked = false;
+  document.querySelector("[name='repeatFortnightly']").checked = false;
   document.getElementById("booking-horse-name").value = "own-horse";
+  document.getElementById("own-horse-name").value = "";
+  document.getElementById("own-horse-location").value = "";
   syncBookingHorseChoice();
   updateServiceChargeDefault();
   render();
@@ -948,7 +1028,7 @@ document.getElementById("booking-list").addEventListener("click", (event) => {
     booking.lessonHorseId = lessonHorseId;
     booking.horseName = horseNameForBooking(lessonHorseId, booking.horseName);
     booking.serviceRate = Number(card.querySelector('[data-edit-field="serviceRate"]').value || 0);
-    booking.horseRate = Number(card.querySelector('[data-edit-field="horseRate"]').value || 0);
+    booking.horseRate = 0;
     state.calendarMonth = booking.date.slice(0, 7);
     editingBookingId = "";
     saveState();

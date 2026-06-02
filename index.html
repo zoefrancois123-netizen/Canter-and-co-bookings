@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Canter and Co Planner</title>
+    <title>Canter & Co Services Planner</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="topbar">
       <a class="brand" href="#calendar" aria-label="Canter and Co home">
-        <img src="assets/canter-co-logo.png" alt="Canter and Co Equestrian Club" />
+        <img src="assets/canter-co-services-logo.png" alt="Canter and Co Services" />
         <span>
-          <strong>Canter and Co</strong>
+          <strong>Canter & Co Services</strong>
           <small>Planner</small>
         </span>
       </a>
@@ -27,9 +27,9 @@
     <main>
       <section class="hero">
         <div>
-          <img class="hero-logo" src="assets/canter-co-logo.png" alt="Canter and Co Equestrian Club" />
-          <p class="eyebrow">Show prep - Riding - Lessons</p>
-          <h1>Canter and Co Planner</h1>
+          <img class="hero-logo" src="assets/canter-co-services-logo.png" alt="Canter and Co Services" />
+          <p class="eyebrow">Care - Coaching - Confidence</p>
+          <h1>Canter & Co Services Planner</h1>
           <p>
             Track lessons, show preparation, and exercise rides while giving clients a polished
             way to request time.
@@ -63,10 +63,21 @@
               <input type="number" min="3" max="100" step="1" name="riderAge" placeholder="Age" />
             </label>
             <label>
-              Horse use charge
-              <input id="horse-charge-display" value="No charge" readonly />
+              Own horse's name
+              <input name="ownHorseName" id="own-horse-name" placeholder="Only if using own horse" />
             </label>
           </div>
+          <label>
+            If using own horse what is your location
+            <select name="ownHorseLocation" id="own-horse-location">
+              <option value="">Not applicable</option>
+              <option value="Stellenbosch">Stellenbosch</option>
+              <option value="Paarl">Paarl</option>
+              <option value="Somerset west">Somerset west</option>
+              <option value="Cape Town">Cape Town</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
           <div class="two-col">
             <label>
               Service
@@ -87,23 +98,19 @@
               <input required type="time" name="time" value="09:00" />
             </label>
           </div>
-          <div class="two-col">
-            <label>
-              Horse charge
-              <input required type="number" min="0" step="10" name="horseRate" id="booking-horse-rate" />
-            </label>
-            <label>
-              Quantity
-              <input required type="number" min="1" step="1" name="quantity" value="1" />
-            </label>
-          </div>
+          <input type="hidden" name="horseRate" id="booking-horse-rate" value="0" />
+          <input type="hidden" name="quantity" value="1" />
           <div class="repeat-box">
             <label class="check-row">
               <input type="checkbox" name="repeatWeekly" />
               Repeat weekly
             </label>
+            <label class="check-row">
+              <input type="checkbox" name="repeatFortnightly" />
+              Repeat every fortnight
+            </label>
             <label>
-              Number of weeks
+              Number of appointments
               <input type="number" min="1" max="52" step="1" name="repeatWeeks" value="4" />
             </label>
           </div>
