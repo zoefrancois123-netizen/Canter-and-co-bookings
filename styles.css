@@ -87,6 +87,32 @@ button {
   overflow-x: auto;
 }
 
+.cloud-login {
+  display: grid;
+  grid-template-columns: 150px 130px auto auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.cloud-login input {
+  min-height: 38px;
+  padding: 8px 10px;
+  border-color: rgba(216, 174, 114, 0.32);
+  background: rgba(255, 249, 238, 0.96);
+}
+
+.cloud-login .ghost {
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.cloud-login span {
+  color: var(--gold-soft);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
 .tab,
 .ghost,
 .primary {
@@ -397,6 +423,48 @@ textarea {
   font-size: 1.75rem;
 }
 
+.cloud-panel {
+  width: min(1180px, calc(100% - 36px));
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(216, 174, 114, 0.44);
+  border-radius: 8px;
+  background: #fffdf8;
+  box-shadow: var(--shadow);
+}
+
+.cloud-panel h2 {
+  margin: 4px 0 8px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.cloud-panel p {
+  margin: 0;
+  color: rgba(35, 31, 27, 0.62);
+}
+
+.cloud-panel-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cloud-panel-form button,
+.cloud-panel-form span {
+  min-height: 42px;
+}
+
+.cloud-panel-form span {
+  display: flex;
+  align-items: center;
+  color: var(--clay);
+  font-weight: 850;
+}
+
 .view {
   display: none;
 }
@@ -482,6 +550,38 @@ textarea {
   border: 1px solid rgba(216, 174, 114, 0.44);
   border-radius: 8px;
   background: var(--linen);
+}
+
+.database-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf8;
+}
+
+.database-panel h3 {
+  margin: 0 0 10px;
+}
+
+.history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+  color: rgba(35, 31, 27, 0.72);
+  font-size: 0.86rem;
+}
+
+.history-item time {
+  color: rgba(35, 31, 27, 0.5);
+  white-space: nowrap;
 }
 
 .inline-actions {
@@ -719,6 +819,10 @@ textarea {
     flex-direction: column;
   }
 
+  .cloud-login {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .hero,
   .client-layout,
   .invoice-layout {
@@ -726,6 +830,7 @@ textarea {
   }
 
   .metrics,
+  .cloud-panel,
   .client-grid,
   .service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -760,6 +865,8 @@ textarea {
   .repeat-box,
   .invoice-parties,
   .metrics,
+  .cloud-panel,
+  .cloud-panel-form,
   .client-grid,
   .service-grid {
     grid-template-columns: 1fr;

@@ -22,6 +22,13 @@
         <button class="tab" data-view="invoices">Invoices</button>
         <button class="tab" data-view="services">Services</button>
       </nav>
+      <div class="cloud-login" id="cloud-login">
+        <input id="login-email" type="email" placeholder="Chloe email" />
+        <input id="login-password" type="password" placeholder="Password" />
+        <button id="login-button" class="ghost" type="button">Log in</button>
+        <button id="logout-button" class="ghost" type="button" hidden>Log out</button>
+        <span id="cloud-status">Local only</span>
+      </div>
     </header>
 
     <main>
@@ -141,6 +148,21 @@
         </article>
       </section>
 
+      <section class="cloud-panel" aria-label="Cloud sync login">
+        <div>
+          <p class="eyebrow">Cloud sync</p>
+          <h2>Log in to save clients and invoices online</h2>
+          <p>Use Chloe's Supabase email and password to sync this app across her phone and computer.</p>
+        </div>
+        <div class="cloud-panel-form">
+          <input id="main-login-email" type="email" placeholder="Email" />
+          <input id="main-login-password" type="password" placeholder="Password" />
+          <button id="main-login-button" class="primary" type="button">Log in</button>
+          <button id="main-logout-button" class="ghost" type="button" hidden>Log out</button>
+          <span id="main-cloud-status">Local only</span>
+        </div>
+      </section>
+
       <section id="calendar" class="view active">
         <div class="section-head">
           <div>
@@ -235,6 +257,10 @@
           </form>
           <div id="client-list" class="client-grid"></div>
         </div>
+        <article class="database-panel">
+          <h3>Client database history</h3>
+          <div id="client-history" class="history-list"></div>
+        </article>
       </section>
 
       <section id="invoices" class="view">
@@ -285,6 +311,10 @@
             </article>
           </div>
         </div>
+        <article class="database-panel">
+          <h3>Invoice database history</h3>
+          <div id="invoice-history" class="history-list"></div>
+        </article>
       </section>
 
       <section id="services" class="view">
@@ -305,6 +335,7 @@
       </div>
     </template>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
   </body>
 </html>

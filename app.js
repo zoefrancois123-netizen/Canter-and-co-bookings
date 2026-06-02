@@ -1,4 +1,10 @@
-const STORAGE_KEY = "canter-co-booking-studio-v2";
+const STORAGE_KEY = "canter-co-services-planner-database";
+const SUPABASE_URL = "https://notlmqtzvsbokjuhtgkh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vdGxtcXR6dnNib2tqdWh0Z2toIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzODA2NDgsImV4cCI6MjA5NTk1NjY0OH0.fdDpm42L_SXInt6oZDOD9rTQrUO8Qw6DV3pEzN2O-sk";
+const LEGACY_STORAGE_KEYS = [
+  "canter-co-booking-studio-v2",
+  "canter-co-booking-studio-v1",
+];
 
 const services = [
   {
@@ -93,6 +99,7 @@ const defaultState = {
   clients: [],
   bookings: [],
   invoices: [],
+  history: [],
   selectedInvoiceId: null,
   calendarMonth: monthKey(new Date()),
 };
@@ -100,6 +107,10 @@ const defaultState = {
 let state = loadState();
 let invoiceDraftItems = [];
 let editingBookingId = "";
+let cloudClient = null;
+let cloudSession = null;
+let cloudSaveTimer = null;
+let isLoadingCloudState = false;
 
 const money = new Intl.NumberFormat("en-ZA", {
   style: "currency",
@@ -108,18 +119,143 @@ const money = new Intl.NumberFormat("en-ZA", {
 });
 
 function loadState() {
-  const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("canter-co-booking-studio-v1");
+  const saved = localStorage.getItem(STORAGE_KEY) || LEGACY_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
   if (!saved) return structuredClone(defaultState);
 
   try {
-    return { ...structuredClone(defaultState), ...JSON.parse(saved) };
+    const loaded = { ...structuredClone(defaultState), ...JSON.parse(saved) };
+    loaded.history = loaded.history || [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+    return loaded;
   } catch {
     return structuredClone(defaultState);
   }
 }
 
 function saveState() {
+  state.lastSavedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  scheduleCloudSave();
+}
+
+function recordHistory(type, message, details = {}) {
+  state.history = state.history || [];
+  state.history.unshift({
+    id: id("history"),
+    type,
+    message,
+    details,
+    createdAt: new Date().toISOString(),
+  });
+  state.history = state.history.slice(0, 250);
+}
+
+function initCloudDatabase() {
+  if (!window.supabase) {
+    setCloudStatus("Cloud unavailable");
+    return;
+  }
+
+  cloudClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  cloudClient.auth.getSession().then(({ data }) => {
+    cloudSession = data.session;
+    updateCloudAuthUi();
+    if (cloudSession) loadCloudState();
+  });
+
+  cloudClient.auth.onAuthStateChange((_event, session) => {
+    cloudSession = session;
+    updateCloudAuthUi();
+    if (cloudSession) loadCloudState();
+  });
+}
+
+function setCloudStatus(message) {
+  ["cloud-status", "main-cloud-status"].forEach((id) => {
+    const status = document.getElementById(id);
+    if (status) status.textContent = message;
+  });
+}
+
+function updateCloudAuthUi() {
+  const loggedIn = Boolean(cloudSession);
+  ["login-email", "login-password", "login-button", "main-login-email", "main-login-password", "main-login-button"].forEach((id) => {
+    document.getElementById(id).hidden = loggedIn;
+  });
+  ["logout-button", "main-logout-button"].forEach((id) => {
+    document.getElementById(id).hidden = !loggedIn;
+  });
+  setCloudStatus(loggedIn ? "Cloud synced" : "Local only");
+}
+
+async function loginToCloud() {
+  if (!cloudClient) return;
+  const email = (document.getElementById("main-login-email").value || document.getElementById("login-email").value).trim();
+  const password = document.getElementById("main-login-password").value || document.getElementById("login-password").value;
+  if (!email || !password) {
+    alert("Enter Chloe's Supabase email and password.");
+    return;
+  }
+
+  setCloudStatus("Logging in...");
+  const { error } = await cloudClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    setCloudStatus("Login failed");
+    alert(error.message);
+  }
+}
+
+async function logoutFromCloud() {
+  if (!cloudClient) return;
+  await cloudClient.auth.signOut();
+  cloudSession = null;
+  updateCloudAuthUi();
+}
+
+async function loadCloudState() {
+  if (!cloudClient || !cloudSession) return;
+  isLoadingCloudState = true;
+  setCloudStatus("Loading cloud...");
+
+  const { data, error } = await cloudClient
+    .from("app_state")
+    .select("data")
+    .eq("id", "main")
+    .maybeSingle();
+
+  if (error) {
+    setCloudStatus("Cloud setup needed");
+    isLoadingCloudState = false;
+    return;
+  }
+
+  if (data?.data) {
+    state = { ...structuredClone(defaultState), ...data.data };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    render();
+  } else {
+    await saveCloudStateNow();
+  }
+
+  isLoadingCloudState = false;
+  setCloudStatus("Cloud synced");
+}
+
+function scheduleCloudSave() {
+  if (!cloudClient || !cloudSession || isLoadingCloudState) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(saveCloudStateNow, 500);
+}
+
+async function saveCloudStateNow() {
+  if (!cloudClient || !cloudSession) return;
+  setCloudStatus("Saving...");
+  const { error } = await cloudClient.from("app_state").upsert({
+    id: "main",
+    data: state,
+    updated_at: new Date().toISOString(),
+  });
+  setCloudStatus(error ? "Cloud save failed" : "Cloud synced");
 }
 
 function id(prefix) {
@@ -218,6 +354,7 @@ function upsertClient(details) {
       email: cleanEmail,
       updatedAt: new Date().toISOString(),
     });
+    recordHistory("client", `Updated client: ${existing.clientName}`, { clientId: existing.id });
     return existing.id;
   }
 
@@ -235,6 +372,7 @@ function upsertClient(details) {
     updatedAt: new Date().toISOString(),
   };
   state.clients.push(client);
+  recordHistory("client", `Created client: ${client.clientName}`, { clientId: client.id });
   return client.id;
 }
 
@@ -247,6 +385,7 @@ function render() {
   renderClients();
   renderServices();
   renderInvoiceTools();
+  renderDatabaseHistory();
 }
 
 function renderHorseOptions() {
@@ -707,6 +846,33 @@ function renderInvoicePreview() {
   `;
 }
 
+function renderDatabaseHistory() {
+  renderHistoryList("client-history", "client");
+  renderHistoryList("invoice-history", "invoice");
+}
+
+function renderHistoryList(elementId, type) {
+  const list = document.getElementById(elementId);
+  if (!list) return;
+
+  const items = (state.history || []).filter((item) => item.type === type).slice(0, 8);
+  if (!items.length) {
+    list.innerHTML = '<p class="muted">No saved changes yet.</p>';
+    return;
+  }
+
+  list.innerHTML = items
+    .map(
+      (item) => `
+        <div class="history-item">
+          <span>${item.message}</span>
+          <time>${formatDate(item.createdAt.slice(0, 10))}</time>
+        </div>
+      `
+    )
+    .join("");
+}
+
 function createInvoice(clientId, bookingIds, dueDate, message, items = []) {
   if (!clientId) {
     alert("Add or choose a client first.");
@@ -731,13 +897,21 @@ function createInvoice(clientId, bookingIds, dueDate, message, items = []) {
   state.invoices.push(invoice);
   state.selectedInvoiceId = invoice.id;
   invoiceDraftItems = [];
+  recordHistory("invoice", `Created invoice: ${invoice.number}`, { invoiceId: invoice.id, clientId });
   saveState();
   render();
 }
 
 function removeBookingFromInvoices(bookingId) {
   state.invoices.forEach((invoice) => {
+    const hadBooking = (invoice.bookingIds || []).includes(bookingId);
     invoice.bookingIds = (invoice.bookingIds || []).filter((id) => id !== bookingId);
+    if (hadBooking) {
+      recordHistory("invoice", `Removed cancelled booking from invoice: ${invoice.number}`, {
+        invoiceId: invoice.id,
+        bookingId,
+      });
+    }
   });
   state.invoices = state.invoices.filter((invoice) => {
     const hasBookings = (invoice.bookingIds || []).length > 0;
@@ -753,6 +927,7 @@ function cancelBooking(booking) {
   if (!confirm("Cancel this appointment? If it is on an invoice, it will be removed from that invoice.")) return;
   booking.status = "Cancelled";
   removeBookingFromInvoices(booking.id);
+  recordHistory("booking", `Cancelled appointment for ${booking.clientName}`, { bookingId: booking.id });
   editingBookingId = "";
   saveState();
   render();
@@ -886,6 +1061,10 @@ document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => showView(tab.dataset.view));
 });
 
+document.getElementById("login-button").addEventListener("click", loginToCloud);
+document.getElementById("logout-button").addEventListener("click", logoutFromCloud);
+document.getElementById("main-login-button").addEventListener("click", loginToCloud);
+document.getElementById("main-logout-button").addEventListener("click", logoutFromCloud);
 document.getElementById("booking-service").addEventListener("change", updateServiceChargeDefault);
 document.getElementById("booking-horse-name").addEventListener("change", syncBookingHorseChoice);
 document.getElementById("booking-service-rate").addEventListener("input", updateBookingTotal);
@@ -916,7 +1095,7 @@ document.getElementById("booking-form").addEventListener("submit", (event) => {
     riderAge: data.riderAge,
   });
   for (let repeatIndex = 0; repeatIndex < repeatCount; repeatIndex += 1) {
-    state.bookings.push({
+    const booking = {
       id: id("booking"),
       clientId,
       clientName: data.clientName,
@@ -939,6 +1118,13 @@ document.getElementById("booking-form").addEventListener("submit", (event) => {
       status: "Requested",
       seriesId,
       createdAt: new Date().toISOString(),
+    };
+    state.bookings.push(booking);
+    recordHistory("booking", `Created appointment for ${data.clientName}`, {
+      bookingId: booking.id,
+      clientId,
+      date: booking.date,
+      repeat: repeatCount > 1 ? repeatLabel : "Once",
     });
   }
   state.calendarMonth = data.date.slice(0, 7);
@@ -999,6 +1185,7 @@ document.getElementById("booking-list").addEventListener("click", (event) => {
 
   if (button.dataset.action === "status") {
     booking.status = button.dataset.status;
+    recordHistory("booking", `${booking.status} appointment for ${booking.clientName}`, { bookingId: booking.id });
     saveState();
     render();
   }
@@ -1031,6 +1218,11 @@ document.getElementById("booking-list").addEventListener("click", (event) => {
     booking.horseRate = 0;
     state.calendarMonth = booking.date.slice(0, 7);
     editingBookingId = "";
+    recordHistory("booking", `Updated appointment for ${booking.clientName}`, {
+      bookingId: booking.id,
+      date: booking.date,
+      time: booking.time,
+    });
     saveState();
     render();
     showView("calendar");
@@ -1111,6 +1303,7 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
 
   if (button.dataset.action === "paid-invoice") {
     invoice.status = "Paid";
+    recordHistory("invoice", `Marked invoice paid: ${invoice.number}`, { invoiceId: invoice.id });
     saveState();
     render();
   }
@@ -1125,3 +1318,4 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
 document.querySelector("[name='date']").value = todayPlus(1);
 document.querySelector("[name='dueDate']").value = todayPlus(7);
 render();
+initCloudDatabase();
