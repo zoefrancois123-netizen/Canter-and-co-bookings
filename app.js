@@ -375,6 +375,7 @@ function upsertClient(details) {
 }
 
 function render() {
+  removeLegacyCloudPanels();
   renderServiceOptions();
   renderHorseOptions();
   renderMetrics();
@@ -384,6 +385,10 @@ function render() {
   renderServices();
   renderInvoiceTools();
   renderDatabaseHistory();
+}
+
+function removeLegacyCloudPanels() {
+  document.querySelectorAll(".cloud-panel").forEach((panel) => panel.remove());
 }
 
 function renderHorseOptions() {
