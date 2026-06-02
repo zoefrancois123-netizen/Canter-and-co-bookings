@@ -22,6 +22,15 @@ body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+body.locked {
+  overflow: hidden;
+}
+
+body.locked .topbar,
+body.locked main {
+  display: none;
+}
+
 button,
 input,
 select,
@@ -34,9 +43,7 @@ button {
 }
 
 .auth-gate {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
+  min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 22px;
@@ -140,32 +147,6 @@ button {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-}
-
-.cloud-login {
-  display: grid;
-  grid-template-columns: 150px 130px auto auto;
-  gap: 8px;
-  align-items: center;
-  min-width: 0;
-}
-
-.cloud-login input {
-  min-height: 38px;
-  padding: 8px 10px;
-  border-color: rgba(216, 174, 114, 0.32);
-  background: rgba(255, 249, 238, 0.96);
-}
-
-.cloud-login .ghost {
-  min-height: 38px;
-  padding: 0 12px;
-}
-
-.cloud-login span {
-  color: var(--gold-soft);
-  font-size: 0.78rem;
-  white-space: nowrap;
 }
 
 .tab,
@@ -476,63 +457,6 @@ textarea {
   margin-top: 8px;
   color: var(--clay);
   font-size: 1.75rem;
-}
-
-.cloud-panel {
-  width: min(1180px, calc(100% - 36px));
-  margin: 18px auto 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
-  gap: 18px;
-  align-items: center;
-  padding: 18px;
-  border: 1px solid rgba(216, 174, 114, 0.44);
-  border-radius: 8px;
-  background: #fffdf8;
-  box-shadow: var(--shadow);
-}
-
-.top-cloud-panel {
-  margin-top: 18px;
-  background: #15120f;
-  color: var(--cream);
-}
-
-.top-cloud-panel h2,
-.top-cloud-panel p {
-  color: var(--cream);
-}
-
-.top-cloud-panel p:not(.eyebrow) {
-  color: rgba(255, 249, 238, 0.72);
-}
-
-.cloud-panel h2 {
-  margin: 4px 0 8px;
-  font-family: Georgia, "Times New Roman", serif;
-}
-
-.cloud-panel p {
-  margin: 0;
-  color: rgba(35, 31, 27, 0.62);
-}
-
-.cloud-panel-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.cloud-panel-form button,
-.cloud-panel-form span {
-  min-height: 42px;
-}
-
-.cloud-panel-form span {
-  display: flex;
-  align-items: center;
-  color: var(--clay);
-  font-weight: 850;
 }
 
 .view {
@@ -889,10 +813,6 @@ textarea {
     flex-direction: column;
   }
 
-  .cloud-login {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .hero,
   .client-layout,
   .invoice-layout {
@@ -900,7 +820,6 @@ textarea {
   }
 
   .metrics,
-  .cloud-panel,
   .client-grid,
   .service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -935,8 +854,6 @@ textarea {
   .repeat-box,
   .invoice-parties,
   .metrics,
-  .cloud-panel,
-  .cloud-panel-form,
   .client-grid,
   .service-grid {
     grid-template-columns: 1fr;

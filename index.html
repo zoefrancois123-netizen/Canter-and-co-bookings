@@ -6,7 +6,7 @@
     <title>Canter & Co Services Planner</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="locked">
     <section class="auth-gate" id="auth-gate">
       <div class="auth-card">
         <img src="assets/canter-co-services-logo.png" alt="Canter and Co Services" />
@@ -35,31 +35,10 @@
         <button class="tab" data-view="invoices">Invoices</button>
         <button class="tab" data-view="services">Services</button>
       </nav>
-      <div class="cloud-login" id="cloud-login">
-        <input id="login-email" type="email" placeholder="Chloe email" />
-        <input id="login-password" type="password" placeholder="Password" />
-        <button id="login-button" class="ghost" type="button">Log in</button>
-        <button id="logout-button" class="ghost" type="button" hidden>Log out</button>
-        <span id="cloud-status">Local only</span>
-      </div>
+      <button id="logout-button" class="ghost" type="button">Log out</button>
     </header>
 
     <main>
-      <section class="cloud-panel top-cloud-panel" aria-label="Cloud sync login">
-        <div>
-          <p class="eyebrow">Cloud sync</p>
-          <h2>Log in to save clients and invoices online</h2>
-          <p>Use Chloe's Supabase email and password to sync this app across her phone and computer.</p>
-        </div>
-        <div class="cloud-panel-form">
-          <input id="main-login-email" type="email" placeholder="Email" />
-          <input id="main-login-password" type="password" placeholder="Password" />
-          <button id="main-login-button" class="primary" type="button">Log in</button>
-          <button id="main-logout-button" class="ghost" type="button" hidden>Log out</button>
-          <span id="main-cloud-status">Local only</span>
-        </div>
-      </section>
-
       <section class="hero">
         <div>
           <img class="hero-logo" src="assets/canter-co-services-logo.png" alt="Canter and Co Services" />
