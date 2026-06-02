@@ -10,6 +10,8 @@ http://localhost:4173
 
 What it does now:
 
+- uses a stable browser-local database for clients, bookings, invoices, and recent change history
+- can sync the full database to Supabase after Chloe logs in
 - shows bookings in a monthly calendar
 - lets clients request bookings for show prep, beginner lessons, exercise rides, and show day support
 - splits horse show prep into Mane Only, Mane & Tail, and Tail Only services
@@ -28,5 +30,13 @@ What it does now:
 - creates invoices from existing bookings or manually added services
 - previews and prints polished invoices with the white-background Canter & Co Services logo
 - saves the data in the browser on this computer
+
+Supabase setup:
+
+1. Open Supabase SQL Editor.
+2. Run the contents of `supabase-setup.sql`.
+3. Go to Authentication > Users.
+4. Add Chloe as a user with an email and password.
+5. Refresh the app, log in from the header, and the app will sync to Supabase.
 
 For a future live version, the next step would be adding real client logins, online payments, email invoice sending, and cloud storage so the data is shared across devices.

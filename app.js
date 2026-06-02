@@ -171,7 +171,7 @@ function initCloudDatabase() {
 }
 
 function setCloudStatus(message) {
-  ["cloud-status", "main-cloud-status"].forEach((id) => {
+  ["cloud-status", "main-cloud-status", "gate-cloud-status"].forEach((id) => {
     const status = document.getElementById(id);
     if (status) status.textContent = message;
   });
@@ -179,6 +179,7 @@ function setCloudStatus(message) {
 
 function updateCloudAuthUi() {
   const loggedIn = Boolean(cloudSession);
+  document.getElementById("auth-gate").classList.toggle("hidden", loggedIn);
   ["login-email", "login-password", "login-button", "main-login-email", "main-login-password", "main-login-button"].forEach((id) => {
     document.getElementById(id).hidden = loggedIn;
   });
@@ -190,8 +191,15 @@ function updateCloudAuthUi() {
 
 async function loginToCloud() {
   if (!cloudClient) return;
-  const email = (document.getElementById("main-login-email").value || document.getElementById("login-email").value).trim();
-  const password = document.getElementById("main-login-password").value || document.getElementById("login-password").value;
+  const email = (
+    document.getElementById("gate-login-email").value ||
+    document.getElementById("main-login-email").value ||
+    document.getElementById("login-email").value
+  ).trim();
+  const password =
+    document.getElementById("gate-login-password").value ||
+    document.getElementById("main-login-password").value ||
+    document.getElementById("login-password").value;
   if (!email || !password) {
     alert("Enter Chloe's Supabase email and password.");
     return;
@@ -1065,6 +1073,12 @@ document.getElementById("login-button").addEventListener("click", loginToCloud);
 document.getElementById("logout-button").addEventListener("click", logoutFromCloud);
 document.getElementById("main-login-button").addEventListener("click", loginToCloud);
 document.getElementById("main-logout-button").addEventListener("click", logoutFromCloud);
+document.getElementById("gate-login-button").addEventListener("click", loginToCloud);
+["gate-login-email", "gate-login-password"].forEach((id) => {
+  document.getElementById(id).addEventListener("keydown", (event) => {
+    if (event.key === "Enter") loginToCloud();
+  });
+});
 document.getElementById("booking-service").addEventListener("change", updateServiceChargeDefault);
 document.getElementById("booking-horse-name").addEventListener("change", syncBookingHorseChoice);
 document.getElementById("booking-service-rate").addEventListener("input", updateBookingTotal);
