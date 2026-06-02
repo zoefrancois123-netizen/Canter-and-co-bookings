@@ -437,6 +437,21 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.top-cloud-panel {
+  margin-top: 18px;
+  background: #15120f;
+  color: var(--cream);
+}
+
+.top-cloud-panel h2,
+.top-cloud-panel p {
+  color: var(--cream);
+}
+
+.top-cloud-panel p:not(.eyebrow) {
+  color: rgba(255, 249, 238, 0.72);
+}
+
 .cloud-panel h2 {
   margin: 4px 0 8px;
   font-family: Georgia, "Times New Roman", serif;
