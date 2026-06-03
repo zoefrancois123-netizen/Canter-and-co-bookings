@@ -39,6 +39,27 @@
     </header>
 
     <main>
+      <section class="booking-type-panel" aria-label="Choose booking type">
+        <div>
+          <p class="eyebrow">Choose booking type</p>
+          <h2>How can we help you today?</h2>
+        </div>
+        <div class="booking-type-options">
+          <button class="booking-type active" type="button" data-category="equestrian">
+            <strong>Equestrian services</strong>
+            <span>Lessons, show prep, schooling, and show help</span>
+          </button>
+          <button class="booking-type" type="button" data-category="house-pet">
+            <strong>House and pet sitting services</strong>
+            <span>House sitting, pet sitting, and animal care</span>
+          </button>
+          <button class="booking-type" type="button" data-category="baby-tutoring">
+            <strong>Baby sitting and tutoring</strong>
+            <span>Baby sitting and tutoring bookings</span>
+          </button>
+        </div>
+      </section>
+
       <section class="hero">
         <div>
           <img class="hero-logo" src="assets/canter-co-services-logo.png" alt="Canter and Co Services" />
@@ -50,7 +71,7 @@
         </div>
         <form id="booking-form" class="booking-panel">
           <div class="panel-title">
-            <span>Client booking request</span>
+            <span id="booking-form-title">Equestrian services request</span>
             <strong id="booking-total">R 950</strong>
           </div>
 
@@ -72,26 +93,26 @@
             </div>
           </div>
 
-          <div class="form-section">
-            <h3>Animal and location</h3>
-            <label>
-              Horse / Animal
+          <div class="form-section" id="appointment-details-section">
+            <h3 id="appointment-details-heading">Animal and location</h3>
+            <label id="booking-horse-field">
+              <span id="booking-horse-label">Horse / Animal</span>
               <select name="horseName" id="booking-horse-name"></select>
             </label>
             <input type="hidden" name="lessonHorseId" id="booking-horse" value="own-horse" />
             <div class="two-col">
-              <label>
-                Rider age
+              <label id="rider-age-field">
+                <span id="rider-age-label">Rider age</span>
                 <input type="number" min="3" max="100" step="1" name="riderAge" placeholder="Age" />
               </label>
-              <label>
-                Own Horse/Animal Name
+              <label id="own-horse-name-field">
+                <span id="own-horse-name-label">Own Horse/Animal Name</span>
                 <input name="ownHorseName" id="own-horse-name" placeholder="Only if using own horse" />
               </label>
             </div>
             <div class="two-col">
-              <label>
-                Broad appointment location
+              <label id="own-horse-location-field">
+                <span id="own-horse-location-label">Broad appointment location</span>
                 <select name="ownHorseLocation" id="own-horse-location">
                   <option value="">Not applicable</option>
                   <option value="Glen Graze">Glen Graze</option>
@@ -102,8 +123,8 @@
                   <option value="Other">Other</option>
                 </select>
               </label>
-              <label>
-                Private yard name
+              <label id="private-yard-name-field">
+                <span id="private-yard-name-label">Private yard name</span>
                 <input name="privateYardName" placeholder="Short answer" />
               </label>
             </div>

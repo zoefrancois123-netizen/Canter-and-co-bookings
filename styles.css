@@ -177,6 +177,68 @@ main {
   padding-bottom: 54px;
 }
 
+.booking-type-panel {
+  width: min(1180px, calc(100% - 36px));
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+  padding: 26px 0 18px;
+  color: var(--cream);
+  background: var(--ink);
+  box-shadow: 0 0 0 100vmax var(--ink);
+  clip-path: inset(0 -100vmax);
+}
+
+.booking-type-panel .eyebrow {
+  color: var(--gold-soft);
+}
+
+.booking-type-panel h2 {
+  margin: 4px 0 0;
+  color: var(--cream);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.booking-type-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.booking-type {
+  display: grid;
+  gap: 6px;
+  min-height: 104px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--ink);
+  background: rgba(255, 253, 248, 0.96);
+  text-align: left;
+}
+
+.booking-type strong {
+  color: var(--charcoal);
+  font-size: 1rem;
+}
+
+.booking-type span {
+  color: rgba(35, 31, 27, 0.62);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.booking-type.active {
+  border-color: rgba(216, 174, 114, 0.88);
+  background: var(--gold);
+  box-shadow: var(--shadow);
+}
+
+.booking-type.active span {
+  color: rgba(21, 18, 15, 0.72);
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
@@ -400,6 +462,10 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.two-col:has(> [hidden]) {
+  grid-template-columns: 1fr;
 }
 
 .repeat-box {
@@ -883,6 +949,7 @@ textarea {
   }
 
   .metrics,
+  .booking-type-options,
   .client-grid,
   .service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -920,6 +987,7 @@ textarea {
   .time-repeat-grid,
   .invoice-parties,
   .metrics,
+  .booking-type-options,
   .client-grid,
   .service-grid {
     grid-template-columns: 1fr;
