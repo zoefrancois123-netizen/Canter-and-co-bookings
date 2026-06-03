@@ -12,6 +12,8 @@ What it does now:
 
 - uses a stable browser-local database for clients, bookings, invoices, and recent change history
 - can sync the full database to Supabase after Chloe logs in
+- can receive public website booking requests into an approval inbox
+- lets Chloe approve website requests before they become calendar appointments
 - shows bookings in a monthly calendar
 - lets clients request bookings for show prep, beginner lessons, exercise rides, and show day support
 - splits horse show prep into Mane Only, Mane & Tail, and Tail Only services
@@ -39,5 +41,7 @@ Supabase setup:
 3. Go to Authentication > Users.
 4. Add Chloe as a user with an email and password.
 5. Refresh the app, log in from the header, and the app will sync to Supabase.
+
+The same SQL setup also creates the public `booking_requests` table used by the Canter & Co website. Website visitors can only create pending requests. Chloe must log in to the private planner to approve or decline them.
 
 For a future live version, the next step would be adding real client logins, online payments, email invoice sending, and cloud storage so the data is shared across devices.

@@ -80,6 +80,14 @@ const services = [
     description: "Baby sitting service.",
   },
   {
+    id: "tutoring",
+    name: "Tutoring",
+    price: 0,
+    unit: "booking",
+    category: "baby-tutoring",
+    description: "Tutoring support. Set the charge when confirming the booking.",
+  },
+  {
     id: "house-sitting",
     name: "House sitting",
     price: 400,
@@ -164,6 +172,7 @@ let state = loadState();
 let invoiceDraftItems = [];
 let editingBookingId = "";
 let selectedBookingCategory = "equestrian";
+let websiteBookingRequests = [];
 let cloudClient = null;
 let cloudSession = null;
 let cloudSaveTimer = null;
@@ -304,6 +313,7 @@ async function loadCloudState() {
 
   isLoadingCloudState = false;
   setCloudStatus("Cloud synced");
+  loadWebsiteBookingRequests();
 }
 
 function scheduleCloudSave() {
@@ -321,6 +331,30 @@ async function saveCloudStateNow() {
     updated_at: new Date().toISOString(),
   });
   setCloudStatus(error ? "Cloud save failed" : "Cloud synced");
+}
+
+async function loadWebsiteBookingRequests() {
+  if (!cloudClient || !cloudSession) return;
+  const list = document.getElementById("website-request-list");
+  if (list) {
+    list.innerHTML = "";
+    list.append(emptyNode("Loading website requests..."));
+  }
+
+  const { data, error } = await cloudClient
+    .from("booking_requests")
+    .select("id,status,request,created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    websiteBookingRequests = [];
+    renderWebsiteBookingRequests("Website request setup needed in Supabase.");
+    return;
+  }
+
+  websiteBookingRequests = data || [];
+  renderWebsiteBookingRequests();
 }
 
 function id(prefix) {
@@ -500,6 +534,7 @@ function render() {
   renderMetrics();
   renderCalendar();
   renderBookings();
+  renderWebsiteBookingRequests();
   renderClients();
   renderServices();
   renderInvoiceTools();
@@ -756,6 +791,158 @@ function renderBookings() {
     `;
     list.append(article);
   });
+}
+
+function publicRequestCategory(serviceType) {
+  if (serviceType === "horse") return "equestrian";
+  if (serviceType === "house-pet") return "house-pet";
+  return "baby-tutoring";
+}
+
+function publicRequestHorseId(serviceType) {
+  if (serviceType === "house-pet") return "other-animal";
+  if (serviceType === "child") return "other-animal";
+  return "own-horse";
+}
+
+function requestDetails(request) {
+  return [
+    request.serviceTypeLabel,
+    request.serviceLabel,
+    request.date ? formatDate(request.date) : "No date selected",
+    request.time || "09:00",
+    request.location,
+  ].filter(Boolean).join(" - ");
+}
+
+function renderWebsiteBookingRequests(message = "") {
+  const list = document.getElementById("website-request-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (message) {
+    list.append(emptyNode(message));
+    return;
+  }
+
+  if (!cloudSession) {
+    list.append(emptyNode("Log in to see website booking requests."));
+    return;
+  }
+
+  if (!websiteBookingRequests.length) {
+    list.append(emptyNode("No pending website requests right now."));
+    return;
+  }
+
+  websiteBookingRequests.forEach((item) => {
+    const request = item.request || {};
+    const article = document.createElement("article");
+    article.className = "booking-card website-request-card";
+    article.dataset.requestId = item.id;
+    article.innerHTML = `
+      <div>
+        <h3>${request.clientName || "Website request"}</h3>
+        <div class="meta">
+          <span>${requestDetails(request)}</span>
+          <span>Email: ${request.email || "Not listed"}</span>
+          <span>Phone: ${request.phone || "Not listed"}</span>
+          ${request.detailsOne ? `<span>Details: ${request.detailsOne}</span>` : ""}
+          ${request.detailsTwo ? `<span>Extra: ${request.detailsTwo}</span>` : ""}
+          <span>Sent: ${new Date(item.created_at).toLocaleString("en-ZA")}</span>
+        </div>
+        ${request.notes ? `<p class="muted">${request.notes}</p>` : ""}
+      </div>
+      <div class="card-actions">
+        <span class="status Requested">Pending</span>
+        <button data-action="approve-website-request" data-id="${item.id}">Approve</button>
+        <button data-action="decline-website-request" data-id="${item.id}">Decline</button>
+      </div>
+    `;
+    list.append(article);
+  });
+}
+
+function bookingFromWebsiteRequest(request, requestId) {
+  const category = publicRequestCategory(request.serviceType);
+  const lessonHorseId = publicRequestHorseId(request.serviceType);
+  const service = serviceById(request.serviceId);
+  const detailsLabel = category === "baby-tutoring" ? "Child details" : category === "house-pet" ? "Pet / animal details" : "Horse / rider details";
+  const extraLabel = category === "house-pet" ? "Home access" : category === "baby-tutoring" ? "Tutoring / care notes" : "Yard / stable";
+  const notes = [
+    request.notes,
+    request.detailsOne ? `${detailsLabel}: ${request.detailsOne}` : "",
+    request.detailsTwo ? `${extraLabel}: ${request.detailsTwo}` : "",
+    `Website request: ${requestId}`,
+  ].filter(Boolean).join("\n");
+
+  const clientId = upsertClient({
+    clientName: request.clientName,
+    email: request.email,
+    phone: request.phone,
+    horseName: request.detailsOne || "",
+    stableAddress: request.location || "",
+    notes: request.notes || "",
+  });
+
+  return {
+    id: id("booking"),
+    clientId,
+    clientName: request.clientName,
+    email: request.email,
+    phone: request.phone,
+    horseName: horseNameForBooking(lessonHorseId, request.detailsOne, category),
+    riderAge: "",
+    serviceId: service.id,
+    category,
+    lessonHorseId,
+    ownHorseName: request.detailsOne || "",
+    ownHorseLocation: request.location || "",
+    privateYardName: request.detailsTwo || "",
+    serviceRate: Number(service.price || 0),
+    horseRate: 0,
+    date: isValidDateKey(request.date) ? request.date : todayPlus(1),
+    time: request.time || "09:00",
+    quantity: 1,
+    notes,
+    status: "Requested",
+    seriesId: "",
+    createdAt: new Date().toISOString(),
+  };
+}
+
+async function reviewWebsiteRequest(requestId, status) {
+  if (!cloudClient || !cloudSession) return;
+  const item = websiteBookingRequests.find((request) => request.id === requestId);
+  if (!item) return;
+
+  if (status === "approved") {
+    const booking = bookingFromWebsiteRequest(item.request || {}, requestId);
+    state.bookings.push(booking);
+    state.calendarMonth = booking.date.slice(0, 7);
+    recordHistory("booking", `Approved website request for ${booking.clientName}`, {
+      bookingId: booking.id,
+      requestId,
+      date: booking.date,
+    });
+    saveState();
+  } else {
+    recordHistory("booking", `Declined website request for ${item.request?.clientName || "client"}`, { requestId });
+    saveState();
+  }
+
+  await cloudClient
+    .from("booking_requests")
+    .update({
+      status,
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: cloudSession.user.id,
+    })
+    .eq("id", requestId);
+
+  websiteBookingRequests = websiteBookingRequests.filter((request) => request.id !== requestId);
+  render();
+  if (status === "approved") showView("calendar");
 }
 
 function renderBookingEditor(booking) {
@@ -1452,6 +1639,21 @@ document.getElementById("booking-list").addEventListener("click", (event) => {
     }
     createInvoice(booking.clientId, [booking.id], todayPlus(7), "Thank you for booking with Canter & Co.");
     showView("invoices");
+  }
+});
+
+document.getElementById("refresh-website-requests").addEventListener("click", loadWebsiteBookingRequests);
+
+document.getElementById("website-request-list").addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  if (!button) return;
+
+  if (button.dataset.action === "approve-website-request") {
+    reviewWebsiteRequest(button.dataset.id, "approved");
+  }
+
+  if (button.dataset.action === "decline-website-request") {
+    reviewWebsiteRequest(button.dataset.id, "declined");
   }
 });
 

@@ -31,6 +31,7 @@
       <nav class="tabs" aria-label="Main views">
         <button class="tab active" data-view="calendar">Calendar</button>
         <button class="tab" data-view="bookings">Bookings</button>
+        <button class="tab" data-view="website-requests">Website Requests</button>
         <button class="tab" data-view="clients">Clients</button>
         <button class="tab" data-view="invoices">Invoices</button>
         <button class="tab" data-view="services">Services</button>
@@ -265,6 +266,18 @@
           </div>
         </div>
         <div id="booking-list" class="list"></div>
+      </section>
+
+      <section id="website-requests" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Website</p>
+            <h2>Pending booking requests</h2>
+          </div>
+          <button id="refresh-website-requests" class="ghost" type="button">Refresh requests</button>
+        </div>
+        <p class="policy-note">Approve a website request before it is added to Chloe's diary. Declined requests stay out of the calendar.</p>
+        <div id="website-request-list" class="list"></div>
       </section>
 
       <section id="clients" class="view">
