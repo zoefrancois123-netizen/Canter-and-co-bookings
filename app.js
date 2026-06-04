@@ -1404,7 +1404,18 @@ async function emailInvoice(invoice) {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      let message = error.message || "The invoice email function failed.";
+      if (error.context?.json) {
+        try {
+          const context = await error.context.json();
+          message = context?.error || context?.message || message;
+        } catch {
+          // Keep the original function error when the response is not JSON.
+        }
+      }
+      throw new Error(message);
+    }
     if (data?.error) throw new Error(data.error);
 
     recordHistory("invoice", `Emailed invoice: ${invoice.number}`, {
