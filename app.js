@@ -1333,15 +1333,91 @@ function invoiceEmailDetails(invoice) {
   };
 }
 
-function emailInvoice(invoice) {
+async function createInvoicePdfBase64(invoice) {
+  state.selectedInvoiceId = invoice.id;
+  renderInvoicePreview();
+
+  if (!window.html2canvas || !window.jspdf?.jsPDF) {
+    throw new Error("The PDF tools did not load. Refresh the planner and try again.");
+  }
+
+  const preview = document.getElementById("invoice-preview");
+  const canvas = await window.html2canvas(preview, {
+    scale: 2,
+    backgroundColor: "#ffffff",
+    useCORS: true,
+  });
+  const imageData = canvas.toDataURL("image/jpeg", 0.95);
+  const pdf = new window.jspdf.jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 8;
+  const printableWidth = pageWidth - margin * 2;
+  const imageHeight = (canvas.height * printableWidth) / canvas.width;
+  let remainingHeight = imageHeight;
+  let y = margin;
+
+  pdf.addImage(imageData, "JPEG", margin, y, printableWidth, imageHeight);
+  remainingHeight -= pageHeight - margin * 2;
+
+  while (remainingHeight > 0) {
+    pdf.addPage();
+    y = margin - (imageHeight - remainingHeight);
+    pdf.addImage(imageData, "JPEG", margin, y, printableWidth, imageHeight);
+    remainingHeight -= pageHeight - margin * 2;
+  }
+
+  return pdf.output("datauristring").split(",")[1];
+}
+
+async function emailInvoice(invoice) {
   const details = invoiceEmailDetails(invoice);
   if (!details.email) {
     alert("This client does not have an email address saved.");
     return;
   }
-  recordHistory("invoice", `Prepared invoice email: ${invoice.number}`, { invoiceId: invoice.id });
-  saveState();
-  window.location.href = `mailto:${encodeURIComponent(details.email)}?subject=${encodeURIComponent(details.subject)}&body=${encodeURIComponent(details.body)}`;
+  if (!cloudClient || !cloudSession) {
+    alert("Log in to the planner before emailing an invoice.");
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Send invoice ${invoice.number} with a PDF attachment to ${details.email}?`
+  );
+  if (!confirmed) return;
+
+  try {
+    setCloudStatus("Preparing invoice PDF...");
+    const attachmentBase64 = await createInvoicePdfBase64(invoice);
+    setCloudStatus("Sending invoice...");
+    const { data, error } = await cloudClient.functions.invoke("send-invoice", {
+      body: {
+        to: details.email,
+        subject: details.subject,
+        text: details.body,
+        invoiceNumber: invoice.number,
+        attachmentBase64,
+      },
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+
+    recordHistory("invoice", `Emailed invoice: ${invoice.number}`, {
+      invoiceId: invoice.id,
+      email: details.email,
+    });
+    saveState();
+    setCloudStatus("Invoice emailed");
+    alert(`Invoice ${invoice.number} was emailed to ${details.email}.`);
+  } catch (error) {
+    setCloudStatus("Invoice email failed");
+    alert(`Invoice email failed: ${error.message || "Please try again."}`);
+  }
 }
 
 function renderInvoicePreview() {
