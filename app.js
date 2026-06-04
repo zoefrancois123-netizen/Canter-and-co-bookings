@@ -9,31 +9,31 @@ const LEGACY_STORAGE_KEYS = [
 const services = [
   {
     id: "show-prep-mane",
-    name: "Horse Show Prep - Mane Only",
+    name: "Plaiting Mane",
     price: 250,
     unit: "session",
     category: "equestrian",
-    description: "Mane preparation for show day.",
+    description: "Mane plaiting for show day.",
   },
   {
     id: "show-prep-mane-tail",
-    name: "Horse Show Prep - Mane & Tail",
+    name: "Plaiting Mane & Tail",
     price: 300,
     unit: "session",
     category: "equestrian",
-    description: "Mane and tail preparation for show day.",
+    description: "Mane and tail plaiting for show day.",
   },
   {
     id: "show-prep-tail",
-    name: "Horse Show Prep - Tail Only",
+    name: "Plaiting Tail",
     price: 50,
     unit: "session",
     category: "equestrian",
-    description: "Tail preparation for show day.",
+    description: "Tail plaiting for show day.",
   },
   {
     id: "beginner-lesson",
-    name: "Flat work Lesson",
+    name: "Flat Work Lesson",
     price: 300,
     unit: "lesson",
     category: "equestrian",
@@ -49,7 +49,7 @@ const services = [
   },
   {
     id: "basics-ground-work",
-    name: "Basics Ground Work Lesson",
+    name: "Basics Ground Work Lesson at Glen Graze (30 mins)",
     price: 200,
     unit: "lesson",
     category: "equestrian",
@@ -64,28 +64,135 @@ const services = [
     description: "A schooling session to keep horses moving and progressing.",
   },
   {
+    id: "baby-sitting-6hr",
+    name: "Baby Sitting (6hr)",
+    price: 300,
+    unit: "booking",
+    category: "baby-tutoring",
+    description: "Six-hour babysitting booking.",
+  },
+  {
+    id: "baby-sitting-full-day",
+    name: "Baby Sitting (Full day 8-5)",
+    price: 500,
+    unit: "booking",
+    category: "baby-tutoring",
+    description: "Full-day babysitting booking.",
+  },
+  {
+    id: "baby-sitting-overnight",
+    name: "Baby Sitting (Overnight)",
+    price: 400,
+    unit: "booking",
+    category: "baby-tutoring",
+    description: "Overnight babysitting booking.",
+  },
+  {
+    id: "tutoring-english-online",
+    name: "Tutoring English Home Language (1hr & Online)",
+    price: 200,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "Online English Home Language tutoring.",
+  },
+  {
+    id: "tutoring-english-in-person",
+    name: "Tutoring English Home Language (1hr & in person)",
+    price: 250,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "In-person English Home Language tutoring.",
+  },
+  {
+    id: "tutoring-afrikaans-online",
+    name: "Tutoring Afrikaans FAL (1hr & Online)",
+    price: 200,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "Online Afrikaans FAL tutoring.",
+  },
+  {
+    id: "tutoring-afrikaans-in-person",
+    name: "Tutoring Afrikaans FAL (1hr & in person)",
+    price: 250,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "In-person Afrikaans FAL tutoring.",
+  },
+  {
+    id: "tutoring-maths-lit-online",
+    name: "Tutoring Maths Lit (1hr & Online)",
+    price: 200,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "Online Maths Lit tutoring.",
+  },
+  {
+    id: "tutoring-maths-lit-in-person",
+    name: "Tutoring Maths Lit (1hr & in person)",
+    price: 250,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "In-person Maths Lit tutoring.",
+  },
+  {
+    id: "tutoring-drama-theory-online",
+    name: "Tutoring Drama Theory (1hr & Online)",
+    price: 200,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "Online Drama Theory tutoring.",
+  },
+  {
+    id: "tutoring-drama-theory-in-person",
+    name: "Tutoring Drama Theory (1hr & in person)",
+    price: 250,
+    unit: "lesson",
+    category: "baby-tutoring",
+    description: "In-person Drama Theory tutoring.",
+  },
+  {
+    id: "house-pet-sitting-overnight",
+    name: "House & Pet Sitting (Overnight)",
+    price: 350,
+    unit: "booking",
+    category: "house-pet",
+    description: "Overnight care for the home and pets.",
+  },
+  {
+    id: "house-sitting-overnight",
+    name: "House Sitting (Overnight)",
+    price: 300,
+    unit: "booking",
+    category: "house-pet",
+    description: "Overnight house sitting service.",
+  },
+  {
+    id: "pet-sitting-check-in",
+    name: "Pet Sitting (Daily check-in, feeding & walk)",
+    price: 100,
+    unit: "visit",
+    category: "house-pet",
+    description: "A daily check-in including feeding and a walk.",
+  },
+  {
+    id: "pet-sitting-feeding",
+    name: "Pet Sitting (Daily feeding)",
+    price: 75,
+    unit: "visit",
+    category: "house-pet",
+    description: "A daily feeding visit.",
+  },
+];
+
+const legacyServices = [
+  {
     id: "show-day-support",
     name: "Show Help",
     price: 400,
     unit: "day",
     category: "equestrian",
-    description: "Show-day help, grooming touch-ups, and rider support.",
-  },
-  {
-    id: "baby-sitting",
-    name: "Baby sitting",
-    price: 300,
-    unit: "booking",
-    category: "baby-tutoring",
-    description: "Baby sitting service.",
-  },
-  {
-    id: "tutoring",
-    name: "Tutoring",
-    price: 0,
-    unit: "booking",
-    category: "baby-tutoring",
-    description: "Tutoring support. Set the charge when confirming the booking.",
+    description: "Previous service retained for booking and invoice history.",
   },
   {
     id: "house-sitting",
@@ -93,7 +200,7 @@ const services = [
     price: 400,
     unit: "booking",
     category: "house-pet",
-    description: "House sitting service.",
+    description: "Previous service retained for booking and invoice history.",
   },
   {
     id: "pet-sitting",
@@ -101,12 +208,13 @@ const services = [
     price: 50,
     unit: "booking",
     category: "house-pet",
-    description: "Pet sitting service.",
+    description: "Previous service retained for booking and invoice history.",
   },
 ];
 
 const lessonHorses = [
-  { id: "own-horse", name: "Client's own horse", charge: 0, notes: "No horse-use charge" },
+  { id: "own-horse", name: "Clients Own Horse/Horses", charge: 0, notes: "No horse-use charge" },
+  { id: "glen-graze-horses", name: "Glen Graze Horses", charge: 0, notes: "Glen Graze horse allocation" },
   { id: "max", name: "Max", charge: 0, notes: "School horse" },
   { id: "star", name: "Star", charge: 0, notes: "School horse" },
   { id: "moonshine", name: "Moonshine", charge: 0, notes: "School horse" },
@@ -122,7 +230,7 @@ const bookingCategoryProfiles = {
     title: "Equestrian services request",
     detailsHeading: "Horse, rider, and location",
     horseLabel: "Horse / Animal",
-    horseOptions: ["own-horse", "max", "star", "moonshine", "caramel", "kaleb"],
+    horseOptions: ["own-horse", "glen-graze-horses"],
     riderAgeLabel: "Rider age",
     showRiderAge: true,
     ownNameLabel: "Own Horse/Animal Name",
@@ -149,14 +257,20 @@ const bookingCategoryProfiles = {
     detailsHeading: "Child and location",
     horseLabel: "",
     horseOptions: ["other-animal"],
-    riderAgeLabel: "Child age",
+    riderAgeLabel: "Child/Childrens Age",
     showRiderAge: true,
-    ownNameLabel: "Child name",
-    ownNamePlaceholder: "Child name or names",
+    ownNameLabel: "Child/Childrens Full Names",
+    ownNamePlaceholder: "Full names of child or children",
     locationLabel: "Broad location for the appointment",
-    yardLabel: "Home / venue name",
+    yardLabel: "House Address / Venue Name & Address",
     notesPlaceholder: "Childcare notes, tutoring subject, routines, allergies, access notes...",
   },
+};
+
+const locationOptionsByCategory = {
+  equestrian: ["Glen Graze", "Stellenbosch", "Paarl", "Somerset west", "Cape Town", "Other"],
+  "house-pet": ["Stellenbosch", "Paarl", "Somerset west", "Cape Town", "Other"],
+  "baby-tutoring": ["Stellenbosch", "Paarl", "Somerset west", "Cape Town"],
 };
 
 const defaultState = {
@@ -363,7 +477,9 @@ function id(prefix) {
 
 function serviceById(serviceId) {
   if (serviceId === "show-prep") return services.find((service) => service.id === "show-prep-mane-tail");
-  return services.find((service) => service.id === serviceId) || services[0];
+  return services.find((service) => service.id === serviceId)
+    || legacyServices.find((service) => service.id === serviceId)
+    || services[0];
 }
 
 function horseById(horseId) {
@@ -464,25 +580,26 @@ function addPickedDate() {
   const endDateNa = document.getElementById("end-date-na").checked;
   const datesField = document.querySelector("[name='dates']");
   if (!startPicker.value) {
-    alert("Choose a start date first.");
+    alert("Choose a preferred date first.");
     return;
   }
-  if (!endDateNa && endPicker.value && endPicker.value < startPicker.value) {
-    alert("End date must be the same as or after the start date.");
+  if (selectedBookingCategory === "baby-tutoring" && !endDateNa && endPicker.value) {
+    if (endPicker.value < startPicker.value) {
+      alert("End date must be the same as or after the preferred date.");
+      return;
+    }
+    datesField.value = datesBetween(startPicker.value, endPicker.value).join("\n");
     return;
   }
-  const dates = parseDateList(datesField.value);
-  const newDates = endDateNa || !endPicker.value
-    ? [startPicker.value]
-    : datesBetween(startPicker.value, endPicker.value);
-  dates.push(...newDates);
-  datesField.value = [...new Set(dates)].join("\n");
+  datesField.value = startPicker.value;
 }
 
 function toggleEndDate() {
   const endPicker = document.getElementById("end-date-picker");
-  endPicker.disabled = document.getElementById("end-date-na").checked;
-  if (endPicker.disabled) endPicker.value = "";
+  const disabled = document.getElementById("end-date-na").checked || selectedBookingCategory !== "baby-tutoring";
+  endPicker.disabled = disabled;
+  if (disabled) endPicker.value = "";
+  addPickedDate();
 }
 
 function emptyNode(message = "New bookings and invoices will appear here as they are added.") {
@@ -587,11 +704,24 @@ function renderServiceOptions() {
   updateBookingFormForCategory();
 }
 
+function renderLocationOptions() {
+  const locationSelect = document.getElementById("own-horse-location");
+  const currentValue = locationSelect.value;
+  const locations = locationOptionsByCategory[selectedBookingCategory] || locationOptionsByCategory.equestrian;
+  locationSelect.innerHTML = [
+    `<option value="">Choose location</option>`,
+    ...locations.map((location) => `<option value="${location}">${location}</option>`),
+  ].join("");
+  locationSelect.value = locations.includes(currentValue) ? currentValue : "";
+}
+
 function updateBookingFormForCategory() {
   const profile = bookingCategoryProfiles[selectedBookingCategory];
   const horseField = document.getElementById("booking-horse-field");
   const riderAgeField = document.getElementById("rider-age-field");
+  const riderAgeInput = document.querySelector("[name='riderAge']");
   const notes = document.querySelector("[name='notes']");
+  const showChildDateRange = selectedBookingCategory === "baby-tutoring";
   document.getElementById("booking-form-title").textContent = profile.title;
   document.getElementById("appointment-details-heading").textContent = profile.detailsHeading;
   document.getElementById("booking-horse-label").textContent = profile.horseLabel;
@@ -600,6 +730,25 @@ function updateBookingFormForCategory() {
   document.getElementById("own-horse-name").placeholder = profile.ownNamePlaceholder;
   document.getElementById("own-horse-location-label").textContent = profile.locationLabel;
   document.getElementById("private-yard-name-label").textContent = profile.yardLabel;
+  riderAgeInput.type = selectedBookingCategory === "baby-tutoring" ? "text" : "number";
+  riderAgeInput.placeholder = selectedBookingCategory === "baby-tutoring" ? "e.g. 6, 8 and 10" : "Age";
+  if (selectedBookingCategory === "baby-tutoring") {
+    riderAgeInput.removeAttribute("min");
+    riderAgeInput.removeAttribute("max");
+    riderAgeInput.removeAttribute("step");
+  } else {
+    riderAgeInput.setAttribute("min", "3");
+    riderAgeInput.setAttribute("max", "100");
+    riderAgeInput.setAttribute("step", "1");
+  }
+  renderLocationOptions();
+  document.getElementById("end-date-field").hidden = !showChildDateRange;
+  document.getElementById("end-date-na-field").hidden = !showChildDateRange;
+  if (!showChildDateRange) {
+    document.getElementById("end-date-na").checked = true;
+    document.getElementById("end-date-picker").value = "";
+  }
+  toggleEndDate();
   horseField.hidden = selectedBookingCategory === "baby-tutoring";
   riderAgeField.hidden = !profile.showRiderAge;
   notes.placeholder = profile.notesPlaceholder;
@@ -629,8 +778,11 @@ function updateHorseChargeDisplay() {
   const shouldLockOwnName = selectedBookingCategory === "equestrian" && !isOwnHorse;
   document.getElementById("own-horse-name").disabled = shouldLockOwnName;
   document.getElementById("own-horse-location").disabled = false;
+  const privateYardName = document.getElementById("private-yard-name");
+  privateYardName.disabled = selectedBookingCategory === "equestrian" && !isOwnHorse;
   if (shouldLockOwnName) {
     document.getElementById("own-horse-name").value = "";
+    privateYardName.value = "";
   }
 }
 
@@ -651,7 +803,7 @@ function horseNameForBooking(horseId, ownHorseName = "", category = selectedBook
   const horse = horseById(horseId);
   if (category === "baby-tutoring") return ownHorseName || "Child booking";
   if (category === "house-pet") return ownHorseName || horse.name;
-  return horse.id === "own-horse" ? (ownHorseName || "Client's own horse") : horse.name;
+  return horse.id === "own-horse" ? (ownHorseName || "Clients Own Horse/Horses") : horse.name;
 }
 
 function profileForBooking(booking) {
@@ -1134,12 +1286,62 @@ function renderInvoiceList() {
         <div class="card-actions">
           <span class="status ${invoice.status}">${invoice.status}</span>
           <button data-action="preview-invoice" data-id="${invoice.id}">Preview</button>
+          <button data-action="email-invoice" data-id="${invoice.id}">Email</button>
           <button data-action="paid-invoice" data-id="${invoice.id}">Paid</button>
           <button data-action="print-invoice" data-id="${invoice.id}">Print</button>
         </div>
       `;
       list.append(article);
     });
+}
+
+function invoiceEmailDetails(invoice) {
+  const client = state.clients.find((item) => item.id === invoice.clientId);
+  const bookingLines = (invoice.bookingIds || [])
+    .map((bookingId) => state.bookings.find((booking) => booking.id === bookingId))
+    .filter(Boolean)
+    .map((booking) => {
+      const service = serviceById(booking.serviceId);
+      return `${formatDate(booking.date)} - ${service.name} - ${money.format(bookingTotal(booking))}`;
+    });
+  const itemLines = (invoice.items || [])
+    .map((item) => `${item.name} - ${item.quantity} x ${money.format(item.price)} = ${money.format(invoiceItemTotal(item))}`);
+  const lines = [
+    `Dear ${client?.clientName || "Client"},`,
+    "",
+    `Please find the details for invoice ${invoice.number} below.`,
+    `Due date: ${formatDate(invoice.dueDate)}`,
+    "",
+    "Services:",
+    ...bookingLines,
+    ...itemLines,
+    "",
+    `Total: ${money.format(invoiceTotal(invoice))}`,
+    "",
+    invoice.message || "Thank you for booking with Canter & Co.",
+    "",
+    "Kind regards,",
+    "Chloe",
+    "Canter & Co Services",
+    "076 609 9533",
+  ];
+
+  return {
+    email: client?.email || "",
+    subject: `Canter & Co Invoice ${invoice.number}`,
+    body: lines.join("\n"),
+  };
+}
+
+function emailInvoice(invoice) {
+  const details = invoiceEmailDetails(invoice);
+  if (!details.email) {
+    alert("This client does not have an email address saved.");
+    return;
+  }
+  recordHistory("invoice", `Prepared invoice email: ${invoice.number}`, { invoiceId: invoice.id });
+  saveState();
+  window.location.href = `mailto:${encodeURIComponent(details.email)}?subject=${encodeURIComponent(details.subject)}&body=${encodeURIComponent(details.body)}`;
 }
 
 function renderInvoicePreview() {
@@ -1192,6 +1394,9 @@ function renderInvoicePreview() {
         <p class="eyebrow">Invoice</p>
         <h2>${invoice.number}</h2>
         <p>Issued ${formatDate(invoice.createdAt.slice(0, 10))}<br />Due ${formatDate(invoice.dueDate)}</p>
+        <button class="invoice-email-button" type="button" data-action="email-preview-invoice" data-id="${invoice.id}">
+          Email Invoice
+        </button>
       </div>
     </header>
     <section class="invoice-parties">
@@ -1449,7 +1654,8 @@ document.getElementById("gate-login-button").addEventListener("click", loginToCl
     if (event.key === "Enter") loginToCloud();
   });
 });
-document.getElementById("add-date").addEventListener("click", addPickedDate);
+document.getElementById("start-date-picker").addEventListener("change", addPickedDate);
+document.getElementById("end-date-picker").addEventListener("change", addPickedDate);
 document.getElementById("end-date-na").addEventListener("change", toggleEndDate);
 document.getElementById("booking-service").addEventListener("change", updateServiceChargeDefault);
 document.getElementById("booking-horse-name").addEventListener("change", syncBookingHorseChoice);
@@ -1719,6 +1925,12 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
     renderInvoicePreview();
   }
 
+  if (button.dataset.action === "email-invoice") {
+    state.selectedInvoiceId = invoice.id;
+    renderInvoicePreview();
+    emailInvoice(invoice);
+  }
+
   if (button.dataset.action === "paid-invoice") {
     invoice.status = "Paid";
     recordHistory("invoice", `Marked invoice paid: ${invoice.number}`, { invoiceId: invoice.id });
@@ -1731,6 +1943,13 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
     renderInvoicePreview();
     window.print();
   }
+});
+
+document.getElementById("invoice-preview").addEventListener("click", (event) => {
+  const button = event.target.closest('[data-action="email-preview-invoice"]');
+  if (!button) return;
+  const invoice = state.invoices.find((item) => item.id === button.dataset.id);
+  if (invoice) emailInvoice(invoice);
 });
 
 document.getElementById("start-date-picker").value = todayPlus(1);

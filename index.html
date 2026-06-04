@@ -77,9 +77,9 @@
           </div>
 
           <div class="form-section">
-            <h3>Client details</h3>
+            <h3>Client Details Responsible for Payment</h3>
             <label>
-              Client name
+              Clients Name and Surname
               <input required name="clientName" placeholder="e.g. Emma Hart" />
             </label>
             <div class="two-col">
@@ -114,8 +114,8 @@
             <div class="two-col">
               <label id="own-horse-location-field">
                 <span id="own-horse-location-label">Broad appointment location</span>
-                <select name="ownHorseLocation" id="own-horse-location">
-                  <option value="">Not applicable</option>
+                <select required name="ownHorseLocation" id="own-horse-location">
+                  <option value="">Choose location</option>
                   <option value="Glen Graze">Glen Graze</option>
                   <option value="Stellenbosch">Stellenbosch</option>
                   <option value="Paarl">Paarl</option>
@@ -126,7 +126,7 @@
               </label>
               <label id="private-yard-name-field">
                 <span id="private-yard-name-label">Private yard name</span>
-                <input name="privateYardName" placeholder="Short answer" />
+                <input name="privateYardName" id="private-yard-name" placeholder="Only if using client's own horse" />
               </label>
             </div>
           </div>
@@ -148,26 +148,25 @@
           <div class="form-section">
             <h3>Date and time</h3>
             <div class="date-builder">
-              <button id="add-date" class="ghost" type="button">Add Consecutive Dates (yy/mm/dd)</button>
               <div class="date-range-controls">
                 <label>
-                  Start date
+                  Preferred date
                   <input type="date" id="start-date-picker" />
                 </label>
-                <label>
+                <label id="end-date-field" hidden>
                   End date
                   <input type="date" id="end-date-picker" />
                 </label>
-                <label class="check-row compact-check">
-                  <input type="checkbox" id="end-date-na" />
-                  NA
+                <label class="check-row compact-check" id="end-date-na-field" hidden>
+                  <input type="checkbox" id="end-date-na" checked />
+                  End Date NA
                 </label>
               </div>
               <input type="hidden" name="dates" />
             </div>
             <div class="two-col time-repeat-grid">
               <label>
-                Time
+                Preferred Time
                 <input required type="time" name="time" value="09:00" />
               </label>
               <label>
@@ -406,6 +405,6 @@
     </template>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=20260604-email-invoice"></script>
   </body>
 </html>

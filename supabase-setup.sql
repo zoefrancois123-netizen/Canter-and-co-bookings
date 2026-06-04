@@ -40,6 +40,7 @@ create table if not exists public.booking_requests (
 
 alter table public.booking_requests enable row level security;
 
+grant usage on schema public to anon, authenticated;
 grant insert on public.booking_requests to anon;
 grant select, update on public.booking_requests to authenticated;
 
@@ -50,8 +51,8 @@ drop policy if exists "authenticated users can update booking requests" on publi
 create policy "public can create booking requests"
 on public.booking_requests
 for insert
-to anon
-with check (status = 'pending');
+to anon, authenticated
+with check (true);
 
 create policy "authenticated users can read booking requests"
 on public.booking_requests

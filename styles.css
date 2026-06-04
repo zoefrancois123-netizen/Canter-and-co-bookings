@@ -481,16 +481,20 @@ textarea {
 
 .date-builder {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
   align-items: end;
 }
 
 .date-range-controls {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) 80px;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) 140px;
   gap: 12px;
   align-items: end;
+}
+
+.date-range-controls:has(> [hidden]) {
+  grid-template-columns: 1fr;
 }
 
 .date-builder .ghost {
@@ -840,6 +844,17 @@ textarea {
   line-height: 1.45;
 }
 
+.invoice-email-button {
+  min-height: 40px;
+  margin-top: 14px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--ink);
+  background: var(--gold);
+  font-weight: 900;
+}
+
 .invoice-parties {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -920,6 +935,7 @@ textarea {
   main > :not(#invoices),
   #invoice-form,
   #invoice-list,
+  .invoice-email-button,
   #invoices .section-head {
     display: none !important;
   }
