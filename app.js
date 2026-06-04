@@ -1342,11 +1342,23 @@ async function createInvoicePdfBase64(invoice) {
   }
 
   const preview = document.getElementById("invoice-preview");
-  const canvas = await window.html2canvas(preview, {
-    scale: 2,
-    backgroundColor: "#ffffff",
-    useCORS: true,
-  });
+  const exportPreview = preview.cloneNode(true);
+  exportPreview.classList.add("invoice-pdf-export");
+  exportPreview.querySelectorAll("button").forEach((button) => button.remove());
+  document.body.append(exportPreview);
+
+  let canvas;
+  try {
+    canvas = await window.html2canvas(exportPreview, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      width: exportPreview.scrollWidth,
+      height: exportPreview.scrollHeight,
+    });
+  } finally {
+    exportPreview.remove();
+  }
   const imageData = canvas.toDataURL("image/jpeg", 0.95);
   const pdf = new window.jspdf.jsPDF({
     orientation: "portrait",

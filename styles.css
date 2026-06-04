@@ -862,6 +862,43 @@ textarea {
   font-weight: 900;
 }
 
+.invoice-pdf-export {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  z-index: 9999;
+  box-sizing: border-box;
+  width: 760px;
+  min-height: 0;
+  padding: 30px 34px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.invoice-pdf-export header {
+  align-items: center;
+  gap: 24px;
+  min-height: 0;
+  padding-bottom: 18px;
+}
+
+.invoice-pdf-export header > img {
+  width: 230px;
+  max-width: 230px;
+}
+
+.invoice-pdf-export .invoice-id-block {
+  min-width: 190px;
+}
+
+.invoice-pdf-export .invoice-parties {
+  margin-top: 18px;
+}
+
+.invoice-pdf-export table {
+  margin: 18px 0;
+}
+
 .invoice-parties {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
