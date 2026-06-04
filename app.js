@@ -1526,6 +1526,18 @@ function renderInvoicePreview() {
   `;
 }
 
+function openInvoicePreview(invoice) {
+  state.selectedInvoiceId = invoice.id;
+  renderInvoicePreview();
+  const preview = document.getElementById("invoice-preview");
+  preview.classList.remove("invoice-preview-opened");
+  requestAnimationFrame(() => {
+    preview.classList.add("invoice-preview-opened");
+    preview.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  window.setTimeout(() => preview.classList.remove("invoice-preview-opened"), 1400);
+}
+
 function renderDatabaseHistory() {
   renderHistoryList("client-history", "client");
   renderHistoryList("invoice-history", "invoice");
@@ -2020,8 +2032,8 @@ document.getElementById("invoice-list").addEventListener("click", (event) => {
   if (!invoice) return;
 
   if (button.dataset.action === "preview-invoice") {
-    state.selectedInvoiceId = invoice.id;
-    renderInvoicePreview();
+    openInvoicePreview(invoice);
+    return;
   }
 
   if (button.dataset.action === "email-invoice") {

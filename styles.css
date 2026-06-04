@@ -808,6 +808,14 @@ textarea {
   min-height: 360px;
   padding: 34px;
   background: #fff;
+  scroll-margin-top: 24px;
+  transition: box-shadow 180ms ease, outline-color 180ms ease;
+}
+
+.invoice-preview.invoice-preview-opened {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  box-shadow: 0 18px 48px rgba(35, 31, 27, 0.18);
 }
 
 .invoice-preview header {
