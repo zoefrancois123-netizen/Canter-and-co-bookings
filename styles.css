@@ -855,6 +855,13 @@ textarea {
   font-weight: 900;
 }
 
+.invoice-list-email-button {
+  border-color: var(--gold);
+  color: var(--ink);
+  background: var(--gold);
+  font-weight: 900;
+}
+
 .invoice-parties {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

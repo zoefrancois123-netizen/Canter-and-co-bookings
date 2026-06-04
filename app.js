@@ -1286,7 +1286,7 @@ function renderInvoiceList() {
         <div class="card-actions">
           <span class="status ${invoice.status}">${invoice.status}</span>
           <button data-action="preview-invoice" data-id="${invoice.id}">Preview</button>
-          <button data-action="email-invoice" data-id="${invoice.id}">Email</button>
+          <button class="invoice-list-email-button" data-action="email-invoice" data-id="${invoice.id}">Email Invoice</button>
           <button data-action="paid-invoice" data-id="${invoice.id}">Paid</button>
           <button data-action="print-invoice" data-id="${invoice.id}">Print</button>
         </div>
