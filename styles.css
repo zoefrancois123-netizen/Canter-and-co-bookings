@@ -976,6 +976,46 @@ textarea {
   font-weight: 900;
 }
 
+.invoice-payment-details {
+  margin: 20px 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(216, 174, 114, 0.42);
+  border-radius: 8px;
+  background: #fff8eb;
+}
+
+.invoice-payment-details > span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--clay);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.invoice-payment-details div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+}
+
+.invoice-payment-details p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.invoice-payment-details strong {
+  display: block;
+  margin-bottom: 3px;
+  color: rgba(35, 31, 27, 0.58);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .empty {
   display: grid;
   gap: 6px;
@@ -1054,6 +1094,7 @@ textarea {
   .date-range-controls,
   .time-repeat-grid,
   .invoice-parties,
+  .invoice-payment-details div,
   .metrics,
   .booking-type-options,
   .client-grid,

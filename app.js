@@ -5,6 +5,12 @@ const LEGACY_STORAGE_KEYS = [
   "canter-co-booking-studio-v2",
   "canter-co-booking-studio-v1",
 ];
+const BANK_DETAILS = {
+  accountName: "Chloe P Francois",
+  bank: "Capitec Bank",
+  accountNumber: "241 727 575 5",
+  branchCode: "470010",
+};
 
 const services = [
   {
@@ -1318,6 +1324,12 @@ function invoiceEmailDetails(invoice) {
     "",
     `Total: ${money.format(invoiceTotal(invoice))}`,
     "",
+    "Payment details:",
+    `Account name: ${BANK_DETAILS.accountName}`,
+    `Bank: ${BANK_DETAILS.bank}`,
+    `Account number: ${BANK_DETAILS.accountNumber}`,
+    `Branch code: ${BANK_DETAILS.branchCode}`,
+    "",
     invoice.message || "Thank you for booking with Canter & Co.",
     "",
     "Kind regards,",
@@ -1522,6 +1534,15 @@ function renderInvoicePreview() {
       <tbody>${rows}</tbody>
     </table>
     <p class="total">Total ${money.format(invoiceTotal(invoice))}</p>
+    <section class="invoice-payment-details">
+      <span>Payment details</span>
+      <div>
+        <p><strong>Account name</strong>${BANK_DETAILS.accountName}</p>
+        <p><strong>Bank</strong>${BANK_DETAILS.bank}</p>
+        <p><strong>Account number</strong>${BANK_DETAILS.accountNumber}</p>
+        <p><strong>Branch code</strong>${BANK_DETAILS.branchCode}</p>
+      </div>
+    </section>
     <p class="muted">${invoice.message}</p>
   `;
 }
